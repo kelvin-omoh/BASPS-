@@ -321,8 +321,8 @@ const Page = () => {
                             <h1 className='py-3 text-gray-400 text-[16px] border-b-3 border-blue-500'>School Profile</h1>
                             <ul className=' text-gray-400 text-[12px]'>
                                 {
-                                    School_Profile.map((profile: any) => (
-                                        <li className=' my-[.5rem]'>{profile.label}</li>
+                                    School_Profile.map((profile: any, i) => (
+                                        <li key={i} className=' my-[.5rem]'>{profile.label}</li>
                                     ))
                                 }
                             </ul>
