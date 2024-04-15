@@ -281,12 +281,9 @@ export default function App() {
     const appraiseNewStaff = useStaffStore((state: any) => state.appraiseNewStaff)
     const appraiseModal = useStaffStore((state: any) => state.appraiseModal)
 
-
-    const handleViewClick = (selectedUser: User) => {
-
-        addNewStaff(selectedUser)
-
-    };
+    const handleViewClick = useCallback((selectedUser: User) => {
+        addNewStaff(selectedUser);
+    }, [addNewStaff]);
 
 
 
@@ -315,7 +312,7 @@ export default function App() {
         }
 
         return filteredUsers;
-    }, [users, filterValue, statusFilter]);
+    }, [filterValue, statusFilter, hasSearchFilter]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -430,7 +427,7 @@ export default function App() {
             default:
                 return cellValue;
         }
-    }, []);
+    }, [appraiseModal, appraiseNewStaff, handleViewClick, onOpen]);
 
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
@@ -549,8 +546,10 @@ export default function App() {
         visibleColumns,
         onSearchChange,
         onRowsPerPageChange,
-        users.length,
-        hasSearchFilter,
+        // users.length,
+        // hasSearchFilter,
+        // filteredItems.length,
+        onClear, onOpen
     ]);
 
     const bottomContent = React.useMemo(() => {
@@ -580,7 +579,7 @@ export default function App() {
                 </div>
             </div>
         );
-    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    }, [selectedKeys, items.length, onNextPage, filteredItems, onPreviousPage, page, pages]);
 
     return (
         <>

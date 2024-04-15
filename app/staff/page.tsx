@@ -6,7 +6,7 @@ import ReviewModal from '../components/staff/Modals/ReviewModal'
 import { useDisclosure } from '@nextui-org/react'
 import { useStaffStore } from '../Store/Store'
 
-const page = () => {
+const Page = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const appraiseNewStaff = useStaffStore((state: any) => state.appraiseNewStaff)
     const appraiseModal = useStaffStore((state: any) => state.appraiseModal)
@@ -20,4 +20,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

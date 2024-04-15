@@ -12,12 +12,12 @@ import {
 } from "@clerk/nextjs";
 
 
-export const Logo = logo
-
 
 
 
 const Page = () => {
+    const Logo = logo
+
 
     const mainfeatures = [
         {

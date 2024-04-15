@@ -24,7 +24,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onOpen, onOpenChange 
     useEffect(() => {
         // Check if both appraiseNewStaff and appraiseModal are true before closing the modal
         appraiseNewStaff(!appraiseModal)
-    }, []);
+    }, [appraiseModal,appraiseNewStaff]);
     return (
         <>
             <Modal size="4xl" isOpen={isOpen} onOpenChange={onOpenChange}>
