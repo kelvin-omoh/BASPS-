@@ -1,0 +1,269 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mongodb"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  MANAGER
+}
+
+enum AcademicRole {
+  ACADEMIC_STAFF
+  NON_ACADEMIC_SENIOR_STAFF
+  NON_ACADEMIC_JUNIOR_STAFF
+}
+
+model User {
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  fullName   String
+  email      String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  systemRole UserRole     @default(USER)
+  staffRole  AcademicRole @default(ACADEMIC_STAFF)
+}
+
+model AcademicStaff {
+  // PERSONAL DATA
+  id                                                String   @id @default(auto()) @map("_id") @db.ObjectId
+  name                                              String
+  college                                           String
+  department                                        String
+  telephone                                         String
+  email                                             String
+  dateOfBirth                                       DateTime
+  placeOfBirth                                      String
+  nationality                                       String
+  maritalStatus                                     String
+  childrenAges                                      String
+  spouseNameAddress                                 String
+  nextOfKinNameAddress                              String
+  dateOfFirstAppointment                            DateTime
+  dateOfConfirmationAppointment                     DateTime
+  presentPosition                                   String
+  dateOfPresentPosition                             DateTime
+  educationalInstitutionAttended                    String
+  academicQualifications                            String
+  professionalQualifications                        String
+  postDoctorateTraining                             String
+  scholarshipDistinctionAndAwards                   String
+  workExperienceInTheUniversitySystem               String
+  workExperienceOutsideTheUniversitySystem          String
+  workExperienceInOtherTertiaryInstitutions         String
+  currentJobDescription                             String
+  administrativeAndManagementExperience             String
+  membershipOfProfessionalBodies                    String
+  publications                                      String
+  patentsDesigns                                    String
+  extracurricularActivities                         String
+  conferencesAndWorkshopsAttendedAndPapersPresented String
+
+  // REVIEW EXERCISE
+  nameOfCollege    String
+  nameOfDepartment String
+
+  personalData     AcademicPersonalData   @relation(fields: [personalDataId], references: [id])
+  comments         AcademicComments       @relation(fields: [commentsId], references: [id])
+  recommendation   AcademicRecommendation @relation(fields: [recommendationId], references: [id])
+  personalDataId   String                 @db.ObjectId
+  commentsId       String                 @db.ObjectId
+  recommendationId String                 @db.ObjectId
+
+  //ANNUAL REVIEW EXERCISE RECOMMENDATION SHEET FOR ACADEMIC STAFF
+  qualificationsWithDates               String
+  datesofAssumptionOfDuty               String
+  statusOn1stAPPointment                String
+  progressionSince1stAppointmentAndDate String
+  postToWhichRecommended                String
+  salaryForPromotion                    String
+  Remark                                String
+}
+
+model AcademicPersonalData {
+  id                                 String          @id @default(auto()) @map("_id") @db.ObjectId
+  staffId                            Int
+  nameInFull                         String
+  qualificationsWithDates            String
+  datesOfAssumptionOfDuty            DateTime
+  progressSinceFirstAssumption       String
+  presentPositionAndDateOfAttainment String
+  postToWhichRecommended             String
+  numberOfPublications               Int
+  presentSalaryGradeStep             String
+  academicStaff                      AcademicStaff[]
+}
+
+model AcademicComments {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  staffId       Int
+  teaching      String
+  research      String
+  service       String
+  AcademicStaff AcademicStaff[]
+}
+
+model AcademicRecommendation {
+  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
+  staffId            Int
+  recommendationText String
+  AcademicStaff      AcademicStaff[]
+}
+
+model NonAcademicSeniorStaff {
+  id                         String   @id @default(auto()) @map("_id") @db.ObjectId
+  fullName                   String
+  dateOfBirth                DateTime
+  placeOfBirth               String
+  stateOfOrigin              String
+  nationality                String
+  maritalStatus              String
+  spouseNameAddress          String
+  childrenAges               String
+  nextOfKinNameAddress       String
+  contactAddress             String
+  telephoneNumbers           String
+  emailAddress               String
+  department                 String
+  dateOfFirstAppointment     DateTime
+  confirmationDate           DateTime
+  presentPosition            String
+  presentGrade               String
+  institutionAttended        String
+  academicQualifications     String
+  professionalQualifications String
+  professionalBodies         String
+  workExperience             String
+  publications               String
+  trainingProgrammes         String
+  conferencesAttended        String
+  extraCurricularActivities  String
+}
+
+model NonAcademicJuniorStaff {
+  id                        String   @id @default(auto()) @map("_id") @db.ObjectId
+  fullName                  String
+  dateOfBirth               DateTime
+  placeOfBirth              String
+  stateOfOrigin             String
+  nationality               String
+  maritalStatus             String
+  spouseNameAddress         String
+  childrenAges              String
+  nextOfKinNameAddress      String
+  contactAddress            String
+  telephoneNumbers          String
+  emailAddress              String
+  department                String
+  dateOfFirstAppointment    DateTime
+  confirmationDate          DateTime
+  presentPosition           String
+  presentGrade              String
+  institutionAttended       String
+  academicQualifications    String
+  workExperience            String
+  extraCurricularActivities String
+}
+
+// const { PrismaClient } = require('@prisma/client');
+// const prisma = new PrismaClient();
+
+// async function createAcademicStaffRecord(data) {
+//   const result = await prisma.academicStaff.create({
+//     data: {
+//       // PERSONAL DATA
+//       name: data.name,
+//       college: data.college,
+//       department: data.department,
+//       telephone: data.telephone,
+//       email: data.email,
+//       dateOfBirth: data.dateOfBirth,
+//       placeOfBirth: data.placeOfBirth,
+//       nationality: data.nationality,
+//       maritalStatus: data.maritalStatus,
+//       childrenAges: data.childrenAges,
+//       spouseNameAddress: data.spouseNameAddress,
+//       nextOfKinNameAddress: data.nextOfKinNameAddress,
+//       dateOfFirstAppointment: data.dateOfFirstAppointment,
+//       dateOfConfirmationAppointment: data.dateOfConfirmationAppointment,
+//       presentPosition: data.presentPosition,
+//       dateOfPresentPosition: data.dateOfPresentPosition,
+//       educationalInstitutionAttended: data.educationalInstitutionAttended,
+//       academicQualifications: data.academicQualifications,
+//       professionalQualifications: data.professionalQualifications,
+//       postDoctorateTraining: data.postDoctorateTraining,
+//       scholarshipDistinctionAndAwards: data.scholarshipDistinctionAndAwards,
+//       workExperienceInTheUniversitySystem: data.workExperienceInTheUniversitySystem,
+//       workExperienceOutsideTheUniversitySystem: data.workExperienceOutsideTheUniversitySystem,
+//       workExperienceInOtherTertiaryInstitutions: data.workExperienceInOtherTertiaryInstitutions,
+//       currentJobDescription: data.currentJobDescription,
+//       administrativeAndManagementExperience: data.administrativeAndManagementExperience,
+//       membershipOfProfessionalBodies: data.membershipOfProfessionalBodies,
+//       publications: data.publications,
+//       patentsDesigns: data.patentsDesigns,
+//       extracurricularActivities: data.extracurricularActivities,
+//       conferencesAndWorkshopsAttendedAndPapersPresented: data.conferencesAndWorkshopsAttendedAndPapersPresented,
+
+//       // REVIEW EXERCISE
+//       nameOfCollege: data.nameOfCollege,
+//       nameOfDepartment: data.nameOfDepartment,
+
+//       //ANNUAL REVIEW EXERCISE RECOMMENDATION SHEET FOR ACADEMIC STAFF
+//       personalData: {
+//         create: {
+//           qualificationsWithDates: data.qualificationsWithDates,
+//           datesofAssumptionOfDuty: data.datesofAssumptionOfDuty,
+//           statusOn1stAPPointment: data.statusOn1stAPPointment,
+//           progressionSince1stAppointmentAndDate: data.progressionSince1stAppointmentAndDate,
+//           postToWhichRecommended: data.postToWhichRecommended,
+//           salaryForPromotion: data.salaryForPromotion,
+//           Remark: data.Remark,
+//         },
+//       },
+//     },
+//   });
+
+//   return result;
+// }
+
+// // Example usage
+// const academicStaffData = {
+//   // Provide the necessary data for each field
+//   // ...
+
+//   // REVIEW EXERCISE
+//   nameOfCollege: 'Example College',
+//   nameOfDepartment: 'Example Department',
+
+//   //ANNUAL REVIEW EXERCISE RECOMMENDATION SHEET FOR ACADEMIC STAFF
+//   qualificationsWithDates: 'Ph.D. in Computer Science (2010)',
+//   datesofAssumptionOfDuty: '2022-01-01',
+//   statusOn1stAPPointment: 'Assistant Professor',
+//   progressionSince1stAppointmentAndDate: 'Excellent',
+//   postToWhichRecommended: 'Associate Professor',
+//   salaryForPromotion: 'Grade/Step XYZ',
+//   Remark: 'Highly recommended for promotion.',
+// };
+
+// createAcademicStaffRecord(academicStaffData)
+//   .then((result) => {
+//     console.log('Academic staff record created:', result);
+//   })
+//   .catch((error) => {
+//     console.error('Error creating academic staff record:', error);
+//   })
+//   .finally(async () => {
+//     await prisma.$disconnect();
+//   });
