@@ -579,7 +579,7 @@ export default function App() {
                 </div>
             </div>
         );
-    }, [selectedKeys, items.length, onNextPage, filteredItems, onPreviousPage, page, pages]);
+    }, [selectedKeys, onNextPage, filteredItems, onPreviousPage, page, pages]);
 
     return (
         <>
