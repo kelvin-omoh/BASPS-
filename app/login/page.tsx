@@ -1,22 +1,31 @@
+'use client'
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import logo from "../assets/logo.png"
 import bg from "../assets/bg.jpg"
 import Link from 'next/link'
 import { BsArrowRight, BsBook, BsClock, BsDownload, BsPeople } from "react-icons/bs"
-import {
-    SignInButton,
-    SignOutButton,
-    SignUpButton,
-    useClerk
-} from "@clerk/nextjs";
+import { useRouter } from 'next/navigation'
+import { Select, SelectItem, button } from "@nextui-org/react";
+import { useUser } from '@auth0/nextjs-auth0/client'
+import { useStaffStore } from '../Store/Store'
+import { userInfo } from 'os'
+import axios from 'axios'
 
 
 
+interface Istaff {
+    value: string
+}
 
 
 const Page = () => {
     const Logo = logo
+    const router = useRouter()
+    const { user, error, isLoading } = useUser();
+    const [staffRole, setStaffRole] = useState('')
+    const addUserRole = useStaffStore((state: any) => state.addUserRole)
+    const UserInStore = useStaffStore((state: any) => state.user)
 
 
     const mainfeatures = [
@@ -49,6 +58,68 @@ const Page = () => {
     ]
 
 
+    const StaffType = [
+        {
+            label: "1",
+            text: "ACADEMIC_STAFF",
+        },
+        {
+            label: "2",
+            text: "NON_ACADEMIC_SENIOR_STAFF",
+        },
+        {
+            label: "3",
+            text: "NON_ACADEMIC_JUNIOR_STAFF",
+        },
+    ];
+
+    const handleStaffChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = event.target.value;
+        console.log(selectedValue);
+        console.log(UserInStore);
+
+        setStaffRole(selectedValue);
+        const userRole = selectedValue === "1"
+            ? "ACADEMIC_STAFF"
+            : selectedValue === "2"
+                ? "NON_ACADEMIC_SENIOR_STAFF"
+                : "NON_ACADEMIC_JUNIOR_STAFF";
+
+        // Update user role in the store
+        addUserRole(userRole);
+
+        console.log(UserInStore);
+
+    };
+
+
+    const handleLoginForStaff = async () => {
+
+
+        if (user) {
+            try {
+                const res = await axios.post(`/api/storeUser/`, {
+                    fullName: user?.name,
+                    email: user?.email,
+                    staffRole: UserInStore.role
+                });
+                console.log("Response data:", res.data);
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+    }
+
+    // useEffect(() => {
+    //     if (user?.email) {
+    //         handleLoginForStaff();
+    //     }
+    // }, [user]);
+
+
+
+
 
     return (
         <div
@@ -57,32 +128,44 @@ const Page = () => {
 
             <div className='   p-[4rem]  rounded-lg text-center flex flex-col justify-center items-center  '>
                 <Image src={Logo} alt={'logo'} className=' w-[4rem] ' />
-                <h1 className=' font-semibold'>Welcome Back</h1>
-                <p className=' text-gray-600 '>Please enter your details.</p>
+                <h1 className=' font-semibold'>Welcome To BAPS</h1>
+
+
 
                 {/* FORM */}
-                <form className=' flex flex-col gap-3 mt-11 w-[70%]' action="">
-                    <label className=' justify-start text-start flex flex-col gap-2' htmlFor="">
-                        Email
-                        <input type="email" className=' p-3  border-2 rounded-lg border-gray-300 ' placeholder=' jan@cme.com' name="" id="" />
-                    </label>
-                    <label className=' justify-start text-start flex flex-col gap-2' htmlFor="">
-                        Passsword
-                        <input type="password" className=' p-3  border-2 rounded-lg border-gray-300 ' placeholder=' jan@cme.com' name="" id="" />
-                    </label>
-                    <div className=' flex justify-between items-center'>
-                        <label className=' flex gap-2 items-center  ' htmlFor="">
-                            <input type='checkbox' />
-                            Remember me
-                        </label>
-                        <Link href={'/'} className=' underline font-semibold'>Forgot password</Link>
-                    </div>
-                    <button className=' my-8 text-white bg-black  rounded-lg p-3 '>
-                        Sign In
-                    </button>
-                    <p>Dont have an account ? <Link href={'/'} className=' underline font-semibold'>Sign Up</Link></p>
+                <form onSubmit={(e) => e.preventDefault()} className=' flex flex-col gap-3 mt-11 w-[70%]' action="">
 
-                    <SignUpButton />
+                    {/* <p className=' text-gray-600 '>select your staff type then   sign-in .</p> */}
+
+                    {/* <Select
+                        label="Staff"
+                        placeholder="Select your staff type"
+                        isRequired
+                        // defaultSelectedKeys={["1"]}
+                        className=""
+                        onChange={handleStaffChange}
+                        value={staffRole}
+                    >
+                        {StaffType.map((staff) => (
+                            <SelectItem key={staff.label} value={staff.text}>
+                                {staff.text}
+                            </SelectItem>
+                        ))}
+                    </Select> */}
+
+
+                    <button onClick={() => {
+
+                        router.push("/api/auth/login")
+
+
+                    }} className=' my-8 text-white bg-black  rounded-lg p-3 '>
+                        Continue to login In
+                    </button>
+
+                    <p>sign-in here as an Adminstrator ? <Link href={'/'} className=' underline font-semibold text-blue-700'>Admin only</Link></p>
+
+                    {/* <SignUpButton /> */}
 
 
 

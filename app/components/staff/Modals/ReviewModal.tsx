@@ -24,7 +24,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onOpen, onOpenChange 
     useEffect(() => {
         // Check if both appraiseNewStaff and appraiseModal are true before closing the modal
         appraiseNewStaff(!appraiseModal)
-    }, [appraiseModal,appraiseNewStaff]);
+    }, []);
     return (
         <>
             <Modal size="4xl" isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -35,7 +35,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onOpen, onOpenChange 
                                 <h1>{staff.name}</h1>
                                 <h1 className=" flex items-center text-[18px] ">
                                     RECOMMENDATION SHEET FOR
-                                    (ACADEMIC STAFF)  (ACADEMIC STAFF)
+                                    (ACADEMIC STAFF)
                                     ANNUAL REVIEW EXERCISE
                                 </h1>
 
@@ -49,7 +49,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onOpen, onOpenChange 
                                     Close
                                 </Button>
                                 <Button onClick={() => appraiseNewStaff(!appraiseModal)} color="primary" onPress={onClose}>
-                                    Action
+                                    Confirm
                                 </Button>
                             </ModalFooter>
                         </>

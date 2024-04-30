@@ -29,7 +29,7 @@ enum AcademicRole {
 model User {
   id         String       @id @default(auto()) @map("_id") @db.ObjectId
   fullName   String
-  email      String
+  email      String       @unique
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   systemRole UserRole     @default(USER)
@@ -38,58 +38,60 @@ model User {
 
 model AcademicStaff {
   // PERSONAL DATA
-  id                                                String   @id @default(auto()) @map("_id") @db.ObjectId
+  id                                                String  @id @default(auto()) @map("_id") @db.ObjectId
   name                                              String
   college                                           String
   department                                        String
   telephone                                         String
-  email                                             String
-  dateOfBirth                                       DateTime
-  placeOfBirth                                      String
-  nationality                                       String
-  maritalStatus                                     String
-  childrenAges                                      String
-  spouseNameAddress                                 String
-  nextOfKinNameAddress                              String
-  dateOfFirstAppointment                            DateTime
-  dateOfConfirmationAppointment                     DateTime
-  presentPosition                                   String
-  dateOfPresentPosition                             DateTime
-  educationalInstitutionAttended                    String
-  academicQualifications                            String
-  professionalQualifications                        String
-  postDoctorateTraining                             String
-  scholarshipDistinctionAndAwards                   String
-  workExperienceInTheUniversitySystem               String
-  workExperienceOutsideTheUniversitySystem          String
-  workExperienceInOtherTertiaryInstitutions         String
+  email                                             String  @unique
+  dateOfBirth                                       String?
+  placeOfBirth                                      String?
+  nationality                                       String?
+  maritalStatus                                     String?
+  childrenAges                                      String?
+  spouseName                                        String?
+  spouseAddress                                     String?
+  numberOfChildren                                  Int?
+  nextOfKinNameAddress                              String?
+  dateOfFirstAppointment                            String
+  dateOfConfirmationAppointment                     String?
+  presentPosition                                   String?
+  dateOfPresentPosition                             String?
+  educationalInstitutionAttended                    String?
+  academicQualifications                            String?
+  professionalQualifications                        String?
+  postDoctorateTraining                             String?
+  scholarshipDistinctionAndAwards                   String?
+  workExperienceInTheUniversitySystem               String?
+  workExperienceOutsideTheUniversitySystem          String?
+  workExperienceInOtherTertiaryInstitutions         String?
   currentJobDescription                             String
-  administrativeAndManagementExperience             String
-  membershipOfProfessionalBodies                    String
-  publications                                      String
-  patentsDesigns                                    String
-  extracurricularActivities                         String
-  conferencesAndWorkshopsAttendedAndPapersPresented String
+  administrativeAndManagementExperience             String?
+  membershipOfProfessionalBodies                    String?
+  publications                                      String?
+  patentsDesigns                                    String?
+  extracurricularActivities                         String?
+  conferencesAndWorkshopsAttendedAndPapersPresented String?
 
   // REVIEW EXERCISE
-  nameOfCollege    String
-  nameOfDepartment String
+  nameOfCollege    String?
+  nameOfDepartment String?
 
-  personalData     AcademicPersonalData   @relation(fields: [personalDataId], references: [id])
-  comments         AcademicComments       @relation(fields: [commentsId], references: [id])
-  recommendation   AcademicRecommendation @relation(fields: [recommendationId], references: [id])
-  personalDataId   String                 @db.ObjectId
-  commentsId       String                 @db.ObjectId
-  recommendationId String                 @db.ObjectId
+  personalData     AcademicPersonalData?   @relation(fields: [personalDataId], references: [id])
+  comments         AcademicComments?       @relation(fields: [commentsId], references: [id])
+  recommendation   AcademicRecommendation? @relation(fields: [recommendationId], references: [id])
+  personalDataId   String?                 @db.ObjectId
+  commentsId       String?                 @db.ObjectId
+  recommendationId String?                 @db.ObjectId
 
   //ANNUAL REVIEW EXERCISE RECOMMENDATION SHEET FOR ACADEMIC STAFF
-  qualificationsWithDates               String
-  datesofAssumptionOfDuty               String
-  statusOn1stAPPointment                String
-  progressionSince1stAppointmentAndDate String
-  postToWhichRecommended                String
-  salaryForPromotion                    String
-  Remark                                String
+  qualificationsWithDates               String?
+  datesofAssumptionOfDuty               String?
+  statusOn1stAPPointment                String?
+  progressionSince1stAppointmentAndDate String?
+  postToWhichRecommended                String?
+  salaryForPromotion                    String?
+  Remark                                String?
 }
 
 model AcademicPersonalData {
@@ -97,7 +99,7 @@ model AcademicPersonalData {
   staffId                            Int
   nameInFull                         String
   qualificationsWithDates            String
-  datesOfAssumptionOfDuty            DateTime
+  datesOfAssumptionOfDuty            String
   progressSinceFirstAssumption       String
   presentPositionAndDateOfAttainment String
   postToWhichRecommended             String
@@ -123,9 +125,9 @@ model AcademicRecommendation {
 }
 
 model NonAcademicSeniorStaff {
-  id                         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id                         String @id @default(auto()) @map("_id") @db.ObjectId
   fullName                   String
-  dateOfBirth                DateTime
+  dateOfBirth                String
   placeOfBirth               String
   stateOfOrigin              String
   nationality                String
@@ -137,8 +139,8 @@ model NonAcademicSeniorStaff {
   telephoneNumbers           String
   emailAddress               String
   department                 String
-  dateOfFirstAppointment     DateTime
-  confirmationDate           DateTime
+  dateOfFirstAppointment     String
+  confirmationDate           String
   presentPosition            String
   presentGrade               String
   institutionAttended        String
@@ -167,8 +169,8 @@ model NonAcademicJuniorStaff {
   telephoneNumbers          String
   emailAddress              String
   department                String
-  dateOfFirstAppointment    DateTime
-  confirmationDate          DateTime
+  dateOfFirstAppointment    String
+  confirmationDate          String
   presentPosition           String
   presentGrade              String
   institutionAttended       String

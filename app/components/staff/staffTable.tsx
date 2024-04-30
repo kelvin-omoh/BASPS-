@@ -279,6 +279,8 @@ export default function App() {
 
 
     const appraiseNewStaff = useStaffStore((state: any) => state.appraiseNewStaff)
+    const toggle = useStaffStore((state: any) => state.toggle)
+    const setToggle = useStaffStore((state: any) => state.setToggle)
     const appraiseModal = useStaffStore((state: any) => state.appraiseModal)
 
     const handleViewClick = useCallback((selectedUser: User) => {
@@ -378,8 +380,10 @@ export default function App() {
                                             onOpen()
                                             handleViewClick(user)
                                             appraiseNewStaff(true)
+
                                         }}
-                                    >Appraise {appraiseModal} </Button>
+                                    >Appraise
+                                    </Button>
 
                                 </DropdownItem>
                                 <DropdownItem>
@@ -427,7 +431,7 @@ export default function App() {
             default:
                 return cellValue;
         }
-    }, [appraiseModal, appraiseNewStaff, handleViewClick, onOpen]);
+    }, [appraiseModal, handleViewClick, onOpen]);
 
     const onNextPage = React.useCallback(() => {
         if (page < pages) {

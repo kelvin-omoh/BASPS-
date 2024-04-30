@@ -1,9 +1,9 @@
-import { SignUp } from "@clerk/nextjs";
+// import { SignUp } from "@clerk/nextjs";
 
 const signUp = () => {
     return (
         <div>
-            <SignUp />
+            {/* <SignUp /> */}
         </div>
     );
 };

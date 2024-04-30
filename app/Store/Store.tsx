@@ -19,10 +19,31 @@ export const useStaffStore = create(
                 staff: {},
                 addNewStaff: (newUser: any) => set({ staff: newUser }),
 
+                user: {
+
+                },
+                addUserRole: (newRole: any) => set({ user: { role: newRole } }),
+
+                systemData: {},
+                addSystemData: (data: any) => set((state: any) => ({ systemData: { ...state.systemData, data } })),
+
+                systemRole: {
+                    role: '',
+                },
+
+                addSystemRole: (newRole: any) => set({ systemRoleu: { role: newRole } }),
+
                 appraiseModal: false,
-                appraiseNewStaff: (modal: any) => set({ appraiseModal: modal }),
+
+                appraiseNewStaff: () => set((state: any) => ({ appraiseModal: !state.appraiseModal })),
 
 
+                toggle: false,
+                setToggle: (modal: any) => set({ toggle: !modal }),
+
+
+                compulsoryForm: false,
+                setIfComulsoryFormIsFilled: () => set((state: any) => ({ compulsoryForm: !state.compulsoryForm })),
 
 
 

@@ -12,12 +12,7 @@ import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue } from "@nextui-org/react";
 
-import {
-    SignInButton,
-    SignOutButton,
-    SignUpButton,
-    useClerk
-} from "@clerk/nextjs";
+
 import { AiFillMail, AiFillPhone, AiOutlineMail } from 'react-icons/ai'
 import user1 from '../assets/user1.jpg'
 import { Listbox, ListboxItem } from "@nextui-org/react";
@@ -40,7 +35,7 @@ import {
     ArcElement,
     Legend,
 } from 'chart.js';
-
+import { useUser } from '@auth0/nextjs-auth0/client';
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -136,6 +131,10 @@ const Page = () => {
         },
     ];
 
+
+    const { user, error, isLoading } = useUser();
+
+
     const performanceColumns = [
         {
             key: "name",
@@ -147,9 +146,6 @@ const Page = () => {
         },
 
     ];
-
-
-    const { user } = useClerk();
 
 
     const School_Profile = [
@@ -168,7 +164,7 @@ const Page = () => {
         },
         {
             key: "email",
-            label: `email : ${user?.emailAddresses}`,
+            label: `email : ${user?.email}`,
         },
         {
             key: "presentPosition",
@@ -253,22 +249,20 @@ const Page = () => {
     };
 
 
-
-
     return (
         <div
-            className=' text-gray-400 w-full bg-[#222831] p-5 flex gap-3 justify-between  items-start  '
+            className=' text-gray-400 w-full bg-[#eeeeee] p-5 flex gap-3 justify-between  items-start  '
 
         >
 
             {/* Left */}
-            <div className='  p-4 rounded-lg bg-[#151721] w-[30%] ' >
+            <div className='  p-4 rounded-lg bg-[#cececeea] w-[30%] ' >
 
 
-                <h4 className=' text-gray-400'>Employee</h4>
+                <h4 className=' text-gray-800'>Employee</h4>
                 <div className='  text-center   mt-[4rem] rounded-md  text-gray-200 relative '>
 
-                    <div className=' relative py-[2rem] bg-[#10101B] w-full'>
+                    <div className=' relative py-[2rem] bg-[#e6e6e6cb] shadow-lg w-full'>
 
 
                         <div className='     mx-auto left-0 flex justify-center   absolute w-full top-[-3rem] '>
@@ -287,24 +281,24 @@ const Page = () => {
 
                         </div>
 
-                        <h1 className=' mt-[4rem] text-[14px]'>{user?.fullName}</h1>
+                        <h1 className=' mt-[4rem]  text-gray-500 text-[14px]'>{user?.name}</h1>
                         {/* Position */}
-                        <h1 className=' text-[16px] text-blue-700'>Head of Department(HOD) <br />
+                        <h1 className=' text-[16px]  text-gray-700 font-semibold'>Head of Department(HOD) <br />
                             <span className=' text-gray-500 '>
                                 ID- #2/7744
                             </span>
 
                         </h1>
                         <div className=' mx-auto absolute bottom-[-5%] flex gap-3 w-full justify-center'>
-                            <button className=' p-3  bg-blue-900/35 text-blue-700 rounded-full
+                            <button className=' p-3  bg-gray-800  text-gray-200 rounded-full
                          border border-gray-500
                         '>
                                 <AiFillMail size={20} /></button>
 
-                            <button className=' p-3  bg-blue-900/35 text-blue-700 rounded-full
+                            <button className=' p-3 bg-gray-800  text-gray-200 rounded-full
                          border border-gray-500
                         '> <AiFillPhone size={20} /></button>
-                            <button className=' p-3  bg-blue-900/35 text-blue-700 rounded-full
+                            <button className=' p-3 bg-gray-800  text-gray-200 rounded-full
                          border border-gray-500
                         '> <BsLinkedin size={20} /></button>
                         </div>
@@ -317,11 +311,11 @@ const Page = () => {
 
 
 
-                    <div className=" w-full  p-4 text-start  bg-[#10101B]  mt-[4rem] rounded-md   relative flex justify-between">
+                    <div className=" w-full  p-4 text-start  bg-[#e6e6e6cb]  mt-[4rem] rounded-md   relative flex justify-between">
 
                         <div className=' w-full'>
-                            <h1 className='py-3 text-gray-400 text-[16px] border-b-3 border-blue-500'>School Profile</h1>
-                            <ul className=' text-gray-400 text-[12px]'>
+                            <h1 className='py-3 text-gray-700 text-[16px] border-b-3 border-blue-500'>School Profile</h1>
+                            <ul className=' text-gray-700 text-[12px]'>
                                 {
                                     School_Profile.map((profile: any, i) => (
                                         <li key={i} className=' my-[.5rem]'>{profile.label}</li>
@@ -337,28 +331,28 @@ const Page = () => {
 
 
                     </div>
-                    <div className=" w-full  p-4 text-start  bg-[#10101B]  mt-[4rem] rounded-md   relative flex justify-between">
+                    <div className=" w-full  p-4 text-start  bg-[#e6e6e6cb]   mt-[4rem] rounded-md   relative flex justify-between">
 
                         <div className=' w-full'>
-                            <h1 className=' text-gray-400 text-[16px] border-b-3 border-blue-500 py-3'>Salary Information</h1>
-                            <p className=' text-[1.8rem] text-gray-100 '>₦650,033 <span className=' text-[.8rem]  text-gray-400'>(Present)</span></p>
+                            <h1 className=' text-gray-700 text-[16px] border-b-3 border-blue-500 py-3'>Salary Information</h1>
+                            <p className=' text-[1.8rem] text-gray-700 '>₦650,033 <span className=' text-[.8rem]  text-gray-400'>(Present)</span></p>
                             <ul className=' mt-5 w-full flex gap-3 justify-between items-center text-gray-400 text-[12px]'>
                                 <li>
                                     <div className=' flex gap-4 flex-col justify-start'>
-                                        <h4 className=' text-white'>₦900,000</h4>
-                                        <h4 className=' text-gray-400'>Advanced </h4>
+                                        <h4 className='  font-semibold text-gray-700'>₦900,000</h4>
+                                        <h4 className=' text-gray-500'>Advanced </h4>
                                     </div>
                                 </li>
                                 <li>
                                     <div className=' flex gap-4 flex-col justify-start'>
-                                        <h4 className=' text-white'>₦500,000</h4>
-                                        <h4 className=' text-gray-400'>Intermediate</h4>
+                                        <h4 className='  font-semibold text-gray-700'>₦500,000</h4>
+                                        <h4 className=' text-gray-500'>Intermediate</h4>
                                     </div>
                                 </li>
                                 <li>
                                     <div className=' flex  gap-4 flex-col justify-start'>
-                                        <h4 className=' text-white'>₦350,033</h4>
-                                        <h4 className=' text-gray-400'>Basic</h4>
+                                        <h4 className='  font-semibold text-gray-700'>₦350,033</h4>
+                                        <h4 className=' text-gray-500'>Basic</h4>
                                     </div>
                                 </li>
                             </ul>
@@ -408,58 +402,41 @@ const Page = () => {
 
                 <div className=" w-full  p-4 text-start gap-9   rounded-md   relative flex justify-between">
 
-                    <div className=' bg-[#10101B] flex gap-5 justify-between  p-4 text-start   rounded-md  w-full'>
+                    <div className=' bg-[#cececeea]  flex gap-5 justify-between  p-4 text-start   rounded-md  w-full'>
                         <div>
 
 
-                            <h1 className=' text-gray-400 text-[16px] border-b-3 border-blue-500 py-3'>Performance Overview</h1>
-                            <p className=' text-[1.8rem] text-gray-100 '>903 <span className=' text-[.8rem]  text-gray-400'>total students</span></p>
+                            <h1 className=' text-gray-800 text-[16px] border-b-3 border-blue-500 py-3'>Performance Overview</h1>
+                            <p className=' text-[1.8rem] text-gray-800 '>903 <span className=' text-[.8rem]  text-gray-800'>total students</span></p>
                             <ul className=' mt-5 w-fullflex flex-col gap-5 justify-between  text-gray-400  text-[12px]'>
                                 <li className=' w-full my-4'>
-                                    <Button className='  w-full hover:bg-gray-900 flex text-white  bg-slate-300/10  items-center gap-5 justify-between ' >
-                                        <h1 className='  text-[1rem] text-gray-400'>Employee of the Month</h1>
+                                    <Button className='  w-full text-gray-800 hover:bg-gray-900 flex hover:text-white   bg-slate-300/10  items-center gap-5 justify-between ' >
+                                        <h1 className='  text-[1rem] '>Employee of the Month</h1>
                                         <h1>100 </h1>
 
                                     </Button>
                                 </li>
                                 <li className=' w-full my-4'>
-                                    <Button className='  w-full hover:bg-gray-900 flex text-white  bg-slate-300/10  items-center gap-5 justify-between ' >
-                                        <h1 className='  text-[1rem] text-gray-400'>Achievement Awards</h1>
+                                    <Button className='  w-full hover:bg-gray-900 hover:text-white flex text-gray-800  bg-slate-300/10  items-center gap-5 justify-between ' >
+                                        <h1 className='  text-[1rem] '>Achievement Awards</h1>
                                         <h1>4 </h1>
 
                                     </Button>
                                 </li>
                                 <li className=' w-full my-4'>
-                                    <Button className='  w-full hover:bg-green-900 flex text-white  bg-slate-300/10  items-center gap-5 justify-between ' >
-                                        <h1 className='  text-[1rem] text-gray-400'>Peer Recognition</h1>
+                                    <Button className='  w-full hover:bg-green-900 flex hover:text-white text-gray-800 bg-slate-300/10  items-center gap-5 justify-between ' >
+                                        <h1 className='  text-[1rem] '>Peer Recognition</h1>
                                         <h1>5 </h1>
                                     </Button>
                                 </li>
-                                {/* <li className=' w-full my-4'>
-                                    <Button className='  w-full hover:bg-green-900 flex text-white  bg-slate-300/10  items-center gap-5 justify-between ' >
-                                        <h1 className='  text-[1rem] text-gray-400'>CSC301</h1>
-                                        <h1>100 </h1>
-                                    </Button>
-                                </li>
-                                <li className=' w-full my-4'>
-                                    <Button className='  w-full hover:bg-yellow-900 flex text-white  bg-slate-300/10  items-center gap-5 justify-between ' >
-                                        <h1 className='  text-[1rem] text-gray-400'>CSC 201</h1>
-                                        <h1>107</h1>
-                                    </Button>
-                                </li>
-                                <li className=' w-full my-4'>
-                                    <Button className='  w-full hover:bg-yellow-900 flex text-white  bg-slate-300/10  items-center gap-5 justify-between ' >
-                                        <h1 className='  text-[1rem] text-gray-400'>CSC 205</h1>
-                                        <h1>150 </h1>
-                                    </Button>
-                                </li> */}
+
 
                             </ul>
                         </div>
 
                         <div className="max-w-xs    ">
 
-                            <select className="  bg-gray-700/30  select select-primary w-full max-w-xs">
+                            <select className="  bg-gray-700/30 text-black  select select-primary w-full max-w-xs">
                                 <option disabled selected>Monthly</option>
                                 <option>Yearly</option>
                                 <option>PerQuartile</option>
@@ -469,10 +446,7 @@ const Page = () => {
                             </select>
 
 
-                            <div className=' mt-[5rem] '>
-                                <Doughnut className=' h-[5rem]' data={Pdata} />
-                                <h1 className=' text-[16px] '>Efficiency</h1>
-                            </div>
+
 
                         </div>
 
@@ -483,35 +457,18 @@ const Page = () => {
 
 
 
-                    <div className=' bg-[#10101B] flex gap-5 justify-between   p-4 text-start   rounded-md  w-full'>
+                    <div className=' bg-[#cececeea] flex gap-5 justify-between   p-4 text-start   rounded-md  w-full'>
 
                         <div className='  '>
-                            <h1 className=' text-gray-400 text-[16px] border-b-3 border-blue-500 py-3'>Initiatives</h1>
+                            <h1 className=' text-gray-700 text-[16px] border-b-3 border-blue-500 py-3'>Initiatives</h1>
 
-                            <div className=' flex items-center justify-between '>
-                                {/* <div>
-                                    <Timeline className=' flex flex-col gap-3'>
-                                        <Timeline.Item className=' text-[.9rem] '> high-quality work and exceeding expectations. </Timeline.Item>
-                                        <Timeline.Item className=' text-[.9rem] '>exceptional contributions to team goals.</Timeline.Item>
-                                        <Timeline.Item className=' text-[.9rem] '>contributions to departmental objectives</Timeline.Item>
-                                        <Timeline.Item className=' text-[.9rem] '>Demonstrates consistently strong performance </Timeline.Item>
-                                        <Timeline.Item className=' text-[.9rem] '> Good performance overall</Timeline.Item>
-                                    </Timeline>
-                                </div>
-                                <div>
-                                    <Timeline className='  flex flex-col gap-[1.4rem] mt-[2.5rem]'>
-                                        <Timeline.Item className=' text-[.9rem] '> 4.6/5 </Timeline.Item>
-                                        <Timeline.Item className=' text-[.9rem] '>9.8/10  </Timeline.Item>
-                                        <Timeline.Item className=' text-[.9rem] '>85/100 </Timeline.Item>
-                                        <Timeline.Item className=' text-[.9rem] '>A</Timeline.Item>
-                                        <Timeline.Item className=' text-[.9rem] '>4/5 </Timeline.Item>
-                                    </Timeline>
-                                </div> */}
-                                <Table aria-label="Example table with dynamic content">
+                            <div className=' tasb flex items-center justify-between '>
+
+                                <Table color="secondary" aria-label="Example table with dynamic content">
                                     <TableHeader columns={performanceColumns}>
                                         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
                                     </TableHeader>
-                                    <TableBody items={performanceRows}>
+                                    <TableBody className=' bg-[#e6e6e6cb] ' items={performanceRows}>
                                         {(item) => (
                                             <TableRow key={item.key}>
                                                 {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
@@ -529,7 +486,7 @@ const Page = () => {
                         <div className="max-w-xs   h-[4rem]   ">
 
 
-                            <select className="  bg-gray-700/30  select select-primary w-full max-w-xs">
+                            <select className="  bg-gray-700/30 text-white  select select-primary w-full max-w-xs">
                                 <option disabled selected>Monthly</option>
                                 <option>Yearly</option>
                                 <option>PerQuartile</option>
@@ -556,14 +513,14 @@ const Page = () => {
 
 
 
-                <div className='flex flex-col w-full justify-center  mb-4   bg-[#10101B] gap-5   p-4 text-start   rounded-md   '>
-                    <div>
-                        <h1 className=' text-white '>Employee Engagement</h1>
-                        <p className=' text-white/70 text-[14px] '>Measure staff engagement and satisfaction through surveys, feedback mechanisms, and pulse checks to identify areas for improvement and foster a positive work environment.</p>
+                <div className='flex flex-col w-full justify-center  mb-4   bg-[#cececeea] gap-5   p-4 text-start   rounded-md   '>
+                    <div className=' text-[#373737] '>
+                        <h1 className='  '>Employee Engagement</h1>
+                        <p className='  text-gray-500  text-[14px] '>Measure staff engagement and satisfaction through surveys, feedback mechanisms, and pulse checks to identify areas for improvement and foster a positive work environment.</p>
 
                     </div>
                     <CChart
-                        className='  w-[40rem]   mx-auto'
+                        className=' w-full  p-3 rounded-lg bg-[#e6e6e6cb]   mx-auto'
                         type="bar"
                         data={{
                             labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -580,25 +537,25 @@ const Page = () => {
                             plugins: {
                                 legend: {
                                     labels: {
-                                        color: "#9CA3AF",
+                                        color: "#020202",
                                     }
                                 }
                             },
                             scales: {
                                 x: {
                                     grid: {
-                                        color: "#9CA3AF",
+                                        color: "#020202",
                                     },
                                     ticks: {
-                                        color: "#9CA3AF",
+                                        color: "#020202",
                                     },
                                 },
                                 y: {
                                     grid: {
-                                        color: "#9CA3AF",
+                                        color: "#020202",
                                     },
                                     ticks: {
-                                        color: "#9CA3AF",
+                                        color: "#020202",
                                     },
                                 },
                             },
@@ -611,41 +568,41 @@ const Page = () => {
                 <div className=' flex justify-between gap-4'>
 
 
-                    <div className=' bg-[#10101B]  gap-5 justify-between  p-4 text-start   rounded-md  w-[80%]'>
-                        <h1 className=' text-[16px] '>Career Progression Insights</h1>
+                    <div className=' bg-[#cececeea]  gap-5 justify-between  p-4 text-start   rounded-md  w-[80%]'>
+                        <h1 className=' text-[16px]  text-gray-700 '>Career Progression Insights</h1>
 
 
                         <ul className=' mt-5 w-full flex flex-col gap-3 justify-between  text-gray-400  text-[12px]'>
                             <li className='   w-full my-1'>
 
-                                <div className=' p-1 rounded-lg bg-gray-900 '>
+                                <div className=' p-1 rounded-lg text-gray-700 bg-[#e6e6e6cb]  '>
                                     <h1>Head of Department </h1>
-                                    <p className=' text-gray-400'>Current Role</p>
+                                    <p className=' text-gray-500'>Current Role</p>
 
                                 </div>
 
                             </li>
                             <li className='   w-full my-1'>
 
-                                <div className=' p-1 rounded-lg bg-gray-900 '>
+                                <div className=' p-1 rounded-lg text-gray-700 bg-[#e6e6e6cb]  '>
                                     <h1>Promotion Opportunities
                                         {/* <span className=' text-[16px]'> {user?.fullName} </span> */}
                                     </h1>
-                                    <p className=' text-gray-400'>He holds a leadership position responsible for overseeing the academic and administrative activities within the Computer Science department at Bells University.</p>
+                                    <p className=' text-gray-500 '>He holds a leadership position responsible for overseeing the academic and administrative activities within the Computer Science department at Bells University.</p>
 
                                 </div>
 
                             </li>
                             <li className='   w-full my-1'>
 
-                                <div className=' p-1 rounded-lg bg-gray-900 '>
+                                <div className=' p-1 rounded-lg text-gray-700 bg-[#e6e6e6cb]  '>
                                     <h1>
 
                                         <span className=' text-[16px]'>
                                             Achievements and Contributions
                                         </span>
                                     </h1>
-                                    <p className=' text-gray-400'> implementing innovative teaching methodologies, fostering research collaborations, and enhancing the academic quality and reputation of the Computer Science department.</p>
+                                    <p className=' text-gray-500'> implementing innovative teaching methodologies, fostering research collaborations, and enhancing the academic quality and reputation of the Computer Science department.</p>
 
                                 </div>
 
@@ -660,7 +617,7 @@ const Page = () => {
 
                     {/*next      */}
 
-                    <div className=' bg-[#10101B] flex gap-5 justify-between  p-4 text-start   rounded-md  w-full'>
+                    <div className=' bg-[#cececeea] flex gap-5 justify-between  p-4 text-start   rounded-md  w-full'>
 
                         <CChart
                             className=' w-[30rem] scale-105'
