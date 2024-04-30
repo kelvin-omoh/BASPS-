@@ -296,7 +296,7 @@ const BehaviouralAtrributesheet = () => {
             </div>
             <p> <span className=' underline font-semibold'>Summary of Score:</span> Possible Maximum Score: 100 marks. Actual Score...............
                 ...marks
-                "Note: This Behavioural Attitude Assessment accounts for 30% of the total appraisal score)</p>
+                &ldquo;Note: This Behavioural Attitude Assessment accounts for 30% of the total appraisal score &quot;</p>
         </div>
     )
 }

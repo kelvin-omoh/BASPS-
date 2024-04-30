@@ -69,7 +69,7 @@ const SummaryOfAssessmentSheet = () => {
             </Table>
 
             <div>
-                <p> <span className=' font-semibold'>Appraiser's General</span> Comment (indicating Appraisee's Strengths and Weaknesses)</p>
+                <p> <span className=' font-semibold'>Appraiser&lsquo;s General</span> Comment (indicating Appraisee&lsquo;s Strengths and Weaknesses)</p>
             </div>
 
             <div className=' w-[80%] flex flex-col gap-[2em] '>

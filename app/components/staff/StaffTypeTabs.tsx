@@ -27,7 +27,7 @@ const StaffTypeTabs: React.FC<any> = ({ isSent, AcademicformData, handleStoreFor
             console.log(roleDisabledKeys);
 
         }
-    }, [userRole]);
+    }, [userRole, roleDisabledKeys]);
 
 
     return (

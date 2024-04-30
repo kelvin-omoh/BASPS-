@@ -431,7 +431,7 @@ export default function App() {
             default:
                 return cellValue;
         }
-    }, [appraiseModal, handleViewClick, onOpen]);
+    }, [appraiseNewStaff, handleViewClick, onOpen]);
 
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
