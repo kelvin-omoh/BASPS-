@@ -52,7 +52,7 @@ export const POST = async (req: Request) => {
 
         if (existingUser) {
             // console.log("You've alredy filled the form", email);
-            console.log(existingUser);
+            console.log("User already exists:", existingUser);
             return NextResponse.json(existingUser, { status: 200 });
 
         } else {
@@ -91,13 +91,13 @@ export const POST = async (req: Request) => {
                 },
             })
 
-            console.log(newUserInfo);
+            console.log("New user created:", newUserInfo);
             return NextResponse.json({ user: newUserInfo }, { status: 200 });
         }
     }
 
     catch (err) {
-        console.log(err);
+        console.error("Error:", err);
         return NextResponse.json("An errror occured", { status: 400 });
 
     }

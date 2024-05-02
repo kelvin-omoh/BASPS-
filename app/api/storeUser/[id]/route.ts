@@ -14,7 +14,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
 
         const existingUser = await dbPrisma.user.findUnique({
             where: {
-                email
+                email: id
             }
         });
 

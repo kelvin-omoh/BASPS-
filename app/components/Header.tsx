@@ -48,7 +48,7 @@ const Header = () => {
                     <BsPerson className=' p-3 bg-gray-600 rounded-full' size={50} />
                     <div className=' flex flex-col  items-start'>
                         <h1 className='  text-black text-[16px] '>{user?.email}</h1>
-                        <p className='  text-black text-[12px] '>{systemData.data.systemRole}</p>
+                        <p className='  text-black text-[12px] '>{systemData?.data?.systemRole}</p>
                     </div>
 
 
