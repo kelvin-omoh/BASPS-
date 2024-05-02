@@ -261,7 +261,7 @@ const StaffGeneralForm = () => {
         }
 
         checkIfUserHasFilledTheForm()
-    }, [id, user?.email])
+    }, [id])
 
     useEffect(() => {
         const checkforStaffRole = async () => {
@@ -303,11 +303,11 @@ const StaffGeneralForm = () => {
 
                 <Select
                     label="Staff"
-                    placeholder={`${SystemData.data.staffRole && checkForm === true ? SystemData.data.staffRole : 'Select your staff type'}`}
+                    placeholder={`${SystemData?.data?.staffRole && checkForm === true ? SystemData.data.staffRole : 'Select your staff type'}`}
                     isRequired
 
                     // defaultSelectedKeys={["1"]}
-                    isDisabled={SystemData.data.staffRole && checkForm === true ? true : false}
+                    isDisabled={SystemData?.data?.staffRole && checkForm === true ? true : false}
                     className=""
                     onChange={handleStaffChange}
                     value={staffRole}
