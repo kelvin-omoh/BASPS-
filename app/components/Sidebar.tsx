@@ -265,17 +265,17 @@ const Sidebar = () => {
                         :
                         user ?
                             <>
-                                {SideNavigations.map(e => (
+                                {staffSideNavigation.map(e => (
                                     <Link key={e.id} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 my-5 flex items-center gap-3' href={`${e.to}`}>{e.icon}{e.text}</Link>
                                 ))}
                             </>
                             :
                             <>
-                                <>
-                                    {SideNavigations.map(e => (
-                                        <Link key={e.id} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 my-5 flex items-center gap-3' href={`${e.to}`}>{e.icon}{e.text}</Link>
-                                    ))}
-                                </>
+
+                                {staffSideNavigation.map(e => (
+                                    <Link key={e.id} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 my-5 flex items-center gap-3' href={`${e.to}`}>{e.icon}{e.text}</Link>
+                                ))}
+
 
                             </>
 
