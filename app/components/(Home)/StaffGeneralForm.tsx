@@ -242,7 +242,7 @@ const StaffGeneralForm = () => {
         const checkIfUserHasFilledTheForm = async () => {
             // Check if id is not null or undefined
             const id = user?.email;
-            if (id) {
+            if (id && id.length > 2) {
                 // Use the length property of the string to check its length
                 if (id.length > 2) {
                     try {
@@ -268,7 +268,7 @@ const StaffGeneralForm = () => {
             const id = user?.email;
             if (id) {
 
-                if (id.length > 2) {
+                if (id.length > 3) {
                     try {
                         const res = await axios.get(`/api/storeUser/` + id);
                         console.log(res.data);
