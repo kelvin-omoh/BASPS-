@@ -13,6 +13,7 @@ import { Providers } from "./providers/providers";
 import { AppProvider } from "./context/AppProvider/Provider";
 import { Inter as FontSans } from "next/font/google"
 import { UserProvider } from '@auth0/nextjs-auth0/client';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 const fontSans = FontSans({
@@ -47,6 +48,10 @@ export default function RootLayout({
 
           <body className={inter.className}>
             <div className=" relative w-full">
+              <Toaster
+                position="top-center"
+                reverseOrder={false}
+              />
               <div className=" fixed w-[15%] h-screen text-white left-0 px-4 flex flex-col bg-[#163d58] ">
                 <Sidebar />
               </div>

@@ -12,6 +12,7 @@ import StaffTypeTabs from "../staff/StaffTypeTabs";
 import { UserRole } from "@prisma/client";
 import { BsArrowDown, BsDownload } from "react-icons/bs";
 import Link from "next/link";
+
 const StaffGeneralForm = () => {
     const [selected, setSelected] = React.useState("photos");
     const addUserRole = useStaffStore((state: any) => state.addUserRole)
@@ -25,6 +26,7 @@ const StaffGeneralForm = () => {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
     // useEffect(() => {
+    console.log(process.env.NEXT_PUBLIC_STRAPI_API_TOKEN);
 
     const handleStoreUser = async () => {
         if (user) {
@@ -70,7 +72,7 @@ const StaffGeneralForm = () => {
 
     const [childrenAges, setChildrenAges] = useState<string>("");
     const [name, setName] = useState<string>("");
-    const [college, setCollege] = useState<string>("k");
+    const [college, setCollege] = useState<string>("");
     const [department, setDepartment] = useState<string>("");
     const [telephone, setTelephone] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -114,7 +116,7 @@ const StaffGeneralForm = () => {
         if (buttonRef.current) {
             alert()
             // Trigger click on the button in ComponentB
-            buttonRef.current.click();
+            buttonRef.current?.click();
         }
     };
 
@@ -273,9 +275,6 @@ const StaffGeneralForm = () => {
                         const res = await axios.get(`/api/storeUser/` + id);
                         console.log(res.data);
                         addSystemData(res.data)
-                        console.log(SystemData);
-
-
 
                     } catch (error) {
                         console.error("Error:", error);
@@ -298,8 +297,8 @@ const StaffGeneralForm = () => {
             {/* FORM */}
 
             <form onSubmit={(e) => e.preventDefault()} className=' mb-[3rem] text-[16px] flex flex-col gap-3 mt-11 w-[40vw]' action="">
-                {compulsoryForm ? "true" : "false"}
-                <p className=' text-gray-600 '>select your staff type </p>
+
+                <p className=' text-gray-600 '>select your staff type  </p>
 
                 <Select
                     label="Staff"

@@ -1,17 +1,20 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { Input, Textarea } from '@nextui-org/react';
-import React, { useState } from 'react';
+import { Input, Select, SelectItem, Textarea } from '@nextui-org/react';
+import axios from 'axios';
+import React, { useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
+import CountryList from '../../CountryList';
+import countryList from 'react-select-country-list';
 
 
-const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef, formData, handleStoreFormData }) => {
+const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
     const { user, error, isLoading } = useUser();
 
     // State to track whether form submission is attempted
     const [formSubmitted, setFormSubmitted] = useState(false);
-    console.log(formData);
 
 
-    const [NonAcademicSeniorStaffData, SetNonAcademicSeniorStaffData] = useState({
+    const [NonAcademicSeniorStaffData, SetNonAcademicSeniorStaffData] = useState<any>({
         fullName: '',
         dateOfBirth: '',
         placeOfBirth: '',
@@ -47,16 +50,59 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef, formData, handleStor
         const { name, value } = e.target;
         console.log(e.target.value);
 
-        SetNonAcademicSeniorStaffData(prevData => ({
-            ...prevData,
-            [name]: value
-        }));
+        SetNonAcademicSeniorStaffData({
+            ...NonAcademicSeniorStaffData,
+            [name]: value,
+        });
     };
+
+
+    const [value, setValue] = useState('Single')
+    const options: any = useMemo(() => countryList().getData(), [])
+
+    const changeHandler = (value: any) => {
+        setValue(value)
+        SetNonAcademicSeniorStaffData({ ...NonAcademicSeniorStaffData, nationality: JSON.stringify(value.label) })
+    }
+
+
+
+
+    const handleSubmit = async (e: any) => {
+        let body = {
+            data:
+            {
+                ...NonAcademicSeniorStaffData, dateOfBirth: new Date(NonAcademicSeniorStaffData.dateOfBirth).toISOString().slice(0, 10), // Convert dateOfBirth to yyyy-MM-dd format
+                dateOfFirstAppointment: new Date(NonAcademicSeniorStaffData.dateOfFirstAppointment).toISOString().slice(0, 10), // Convert dateOfFirstAppointment to yyyy-MM-dd format
+                confirmationDate: new Date(NonAcademicSeniorStaffData.confirmationDate).toISOString().slice(0, 10), // Convert dateOfConfirmationAppointment to yyyy-MM-dd format
+
+            }
+        }
+
+        console.log(JSON.stringify(body));
+        try {
+            e.preventDefault();
+            const res = await axios.post(`http://localhost:1337/api/non-academic-senior-staffs`, body, {
+                headers: {
+                    'Authorization': 'Bearer ' + process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
+                }
+            })
+            console.log(res.data);
+            toast.success('Successfully filled !!!!')
+
+        } catch (error: any) {
+            // toast.error('An error occured ,Try again!', error?.response?.data?.error?.message)
+            toast.error('Try again !!, email already taken', error?.response?.data?.error?.message);
+
+            console.log(error);
+        }
+
+    }
 
     return (
         <form onSubmit={(e) => {
             e.preventDefault()
-            handleStoreFormData()
+            handleSubmit(e)
 
         }}
             className='w-full pb-[4rem]'>
@@ -76,7 +122,7 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef, formData, handleStor
                                 value={NonAcademicSeniorStaffData.department} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
                         </label>
                         <label className='flex flex-col' htmlFor="">TELEPHONE:
-                            <textarea name='telephoneNumbers' required className='border bg-slate-50 rounded-lg p-3'
+                            <input name='telephoneNumbers' maxLength={11} required className='border bg-slate-50 rounded-lg p-3'
                                 value={NonAcademicSeniorStaffData.telephoneNumbers} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
                         </label>
                         <label className='flex flex-col' htmlFor="">EMAIL ADDRESS:
@@ -89,10 +135,7 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef, formData, handleStor
                             <Input required name='placeOfBirth' type='text' placeholder='e.g Ikotun,Lagos,Nigeria ' className='border bg-slate-50 rounded-lg p-3'
                                 value={NonAcademicSeniorStaffData.placeOfBirth} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
                         </label>
-                        <label className='flex flex-col' htmlFor="">DATE OF CONFIRMATION OF APPOINTMENT:
-                            <Input required name='dateOfFirstAppointment' type='date' className='border bg-slate-50 rounded-lg p-3'
-                                value={NonAcademicSeniorStaffData.dateOfFirstAppointment} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                        </label>
+
                         <label className='flex flex-col' htmlFor="">PRESENT POSITION:
                             <Input required type='text' name='presentPosition' className='border bg-slate-50 rounded-lg p-3'
                                 value={NonAcademicSeniorStaffData.presentPosition} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
@@ -109,8 +152,8 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef, formData, handleStor
                 <div className='pb-7 w-full'>
                     <div className='flex flex-col gap-6' >
                         <label className='flex flex-col' htmlFor="">NATIONALITY:
-                            <input required type="text" name='nationality' className='border bg-slate-50 rounded-lg p-3'
-                                value={NonAcademicSeniorStaffData.nationality} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
+                            <CountryList changeHandler={changeHandler} options={options} value={value} setValue={setValue} />
+
                         </label>
                         <label className='flex flex-col' htmlFor="">stateOfOrigin:
                             <input required type="text" name='stateOfOrigin' className='border bg-slate-50 rounded-lg p-3'
@@ -121,8 +164,26 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef, formData, handleStor
                                 value={NonAcademicSeniorStaffData.contactAddress} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
                         </label>
                         <label className='flex flex-col' htmlFor="">MARITAL STATUS:
-                            <input required type="text" name='maritalStatus' className='border bg-slate-50 rounded-lg p-3'
-                                value={NonAcademicSeniorStaffData.maritalStatus} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
+                            <Select
+                                isRequired
+                                onChange={(e) => SetNonAcademicSeniorStaffData({ ...NonAcademicSeniorStaffData, maritalStatus: e.target.value })}
+                                placeholder="Select your  MARITAL STATUS:"
+                                // defaultSelectedKeys={["Single"]}
+                                className="max-w-xs"
+                            >
+
+                                <SelectItem key={'Single'} value={'Single'}>
+                                    {'Single'}
+                                </SelectItem>
+                                <SelectItem key={'Married'} value={'Married'}>
+                                    {'Married'}
+                                </SelectItem>
+                                <SelectItem key={'Divorced'} value={'Divorced'}>
+                                    {'Divorced'}
+                                </SelectItem>
+
+                            </Select>
+
                         </label>
 
                         <label className="flex flex-col" htmlFor="">NO OF CHILDREN AND THEIR AGES:
@@ -257,7 +318,7 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef, formData, handleStor
                 </div>
             </div>
 
-            <button ref={buttonRef} onClick={() => console.log(NonAcademicSeniorStaffData)} className=' hidden' type="submit">Submit</button>
+            <button onClick={(e: any) => handleSubmit(e)} ref={buttonRef} className=' hidden' type="submit">Submit</button>
         </form>
     );
 };

@@ -61,14 +61,12 @@ const StaffTypeTabs: React.FC<any> = ({ isSent, AcademicformData, handleStoreFor
                         <Tab key="NON_ACADEMIC_SENIOR_STAFF" title="Non Academic Senior Staff">
                             <ScrollShadow className="w-full px-5 h-[400px]">
 
-                                <NonAcademicSeniorStaff buttonRef={buttonRef} handleNonAcademicSeniorStaffChange={handleNonAcademicSeniorStaffChange}
-
-                                    handleStoreFormData={handleStoreFormData} formData={NonAcademicSeniorStaffData} />
+                                <NonAcademicSeniorStaff buttonRef={buttonRef} />
                             </ScrollShadow>
                         </Tab>
                         <Tab key="NON_ACADEMIC_JUNIOR_STAFF" title="Non Academic Junior Staff">
                             <ScrollShadow className="w-full px-5 h-[400px]">
-                                <NonAcademicJuniorStaff formData={NonAcademicJuniorStaffData} />
+                                <NonAcademicJuniorStaff buttonRef={buttonRef} formData={NonAcademicJuniorStaffData} />
                             </ScrollShadow>
                         </Tab>
                     </Tabs>
