@@ -12,7 +12,7 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import { useStaffStore } from '../Store/Store'
 const Sidebar = () => {
     const { user, error, isLoading } = useUser();
-    const UserInStore = useStaffStore((state: any) => state.user)
+    const systemRole = useStaffStore((state: any) => state.user)
 
     const router = useRouter()
 
@@ -240,7 +240,7 @@ const Sidebar = () => {
         },
     ]
 
-    console.log(UserInStore.role);
+    console.log(systemRole.role);
 
     return (
         <div className=' w-full '>
@@ -256,7 +256,7 @@ const Sidebar = () => {
 
 
                 {
-                    UserInStore.role === "ACADEMIC_STAFF" || UserInStore.role === "NON_ACADEMIC_SENIOR_STAFF" || UserInStore.role === "NON_ACADEMIC_JUNIOR_STAFF"
+                    systemRole.role !== "USER"
                         ?
                         staffSideNavigation.map((role, i) => (
                             <Link key={i} className={`hover:bg-[#282828af] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-100 transition-all delay-74 my-5 flex items-center gap-3  ${pathname === role.to && "bg-[#282828] shadow-md border-white border"}`} href={`${role.to}`}>{role.icon}{role.text}</Link>
