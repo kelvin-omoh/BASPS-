@@ -48,41 +48,7 @@ export default function Home() {
   ]
 
 
-  const animals = [
-    { name: 'Dog', type: "Mammal" },
-    { name: 'Fish', type: "NonMammal" },
-    { name: 'man', type: "Mammal" },
-    { name: 'cat', type: "Mammal" },
-    { name: 'snail', type: "NonMammal" },
-    { name: 'chicken', type: "NonMammal" },
-    { name: 'lion', type: "Mammal" },
-  ]
 
-
-  const tempObject: any = {}
-  const sa = {
-    name: "ade"
-  }
-  animals.forEach((element: any) => {
-    if (tempObject[element.type] === undefined) {
-
-      tempObject[element.type] = []
-    }
-    // console.log(tempObject[element.type]);
-    // console.log(sa['name']);
-
-    tempObject[element.type].push(element)
-  });
-
-  console.log(tempObject);
-
-
-  // cosnt schema = [
-  //   {
-  //     categoryName: "",
-  //     conte
-  //   }
-  // ]
 
   return (
     <div className={`body`}>
@@ -146,19 +112,6 @@ export default function Home() {
           <div className="text-[2rem] h-[90vh] p-5  gap-9 flex justify-between w-full items-center mx-auto my-auto ">
 
             <>
-
-
-              {/* {Object.entries(tempObject).map(([name, type]: any) => (
-                <div className=" flex flex-col">
-                  <h1>{name}</h1>
-                  {type.map((e: any) => (
-                    <li key={e}>{e.name}</li>
-                  ))}
-                </div>
-
-              ))} */}
-
-
               <div className=" w-[50vw] flex flex-col gap-5">
                 <h1 className=' font-semibold text-center'>Welcome To BAPS</h1>
                 <Button onClick={() => {

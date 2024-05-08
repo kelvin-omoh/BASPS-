@@ -15,7 +15,7 @@ const Page = () => {
     const [selectedReport, setSelectedReport] = useState("Recomemdation sheet for Annual  Review Excersise (sheet 1)");
     const { user, error, isLoading } = useUser();
     const UserRole = useStaffStore((state: any) => state.user)
-    const [checkFormIfFilled, setCheckFormIfFilled] = useState(false)
+    // const [checkFormIfFilled, setCheckFormIfFilled] = useState(false)
     const breadCrumbs = [
         {
             key: "Recomemdation sheet for Annual  Review Excersise (sheet 1)",
@@ -41,10 +41,7 @@ const Page = () => {
             key: "Summary of Assessment: (sheet 6)",
             text: "Summary of Assessment: (sheet 6)",
         },
-        // {
-        //     key: "Head of Department /Dean Report: (sheet 7)",
-        //     text: "Head of Department /Dean Report: (sheet 7)",
-        // },
+
     ];
 
     const selectBreadCrumb = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -55,19 +52,19 @@ const Page = () => {
         switch (selectedReport) {
             case "Recomemdation sheet for Annual  Review Excersise (sheet 1)":
                 return <ReviewExerciseSheet1 />;
-            case "Annual  Review Excersise Recommendation (sheet 2)":
-                return <AnnualReviewExcersiseRecommendation />;
-            case "ANNUAL PERFORMANCE EVALUATION REPORT ACADEMIC STAFF (sheet 3)":
-                return <AnnualPerformanceEvaluationReportAcademicStaff />;
-            case "WORK/COMPETENCY ASSESSMENT (sheet 4)":
-                return <WorkAndCompetencySheet />;
-            case "BEHAVIORAL ATTRIBUTES ASSESSMENT (sheet 5)":
-                return <BehaviouralAtrributesheet />;
-            case "Summary of Assessment: (sheet 6)":
-                return <SummaryOfAssessmentSheet />;
+            // case "Annual  Review Excersise Recommendation (sheet 2)":
+            //     return <AnnualReviewExcersiseRecommendation />;
+            // case "ANNUAL PERFORMANCE EVALUATION REPORT ACADEMIC STAFF (sheet 3)":
+            //     return <AnnualPerformanceEvaluationReportAcademicStaff />;
+            // case "WORK/COMPETENCY ASSESSMENT (sheet 4)":
+            //     return <WorkAndCompetencySheet />;
+            // case "BEHAVIORAL ATTRIBUTES ASSESSMENT (sheet 5)":
+            //     return <BehaviouralAtrributesheet />;
+            // case "Summary of Assessment: (sheet 6)":
+            //     return <SummaryOfAssessmentSheet />;
             // Add more cases for other reports if needed
             default:
-                return null;
+                return <></>;
         }
     };
 

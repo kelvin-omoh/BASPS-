@@ -56,13 +56,13 @@ const Sidebar = () => {
                     user?.email ?
                         <button className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 w-full flex items-center gap-3'
                             onClick={() => {
-                                router.push("/api/auth/logout");
-                                window.location.reload(); // Reload the page
+                                // router.push("/api/auth/logout");
+                                // window.location.reload(); // Reload the page
 
-                                // After reloading the page, redirect to the login page
-                                window.onload = function () {
-                                    router.push("/logout");
-                                };
+                                // // After reloading the page, redirect to the login page
+                                // window.onload = function () {
+                                //     router.push("/logout");
+                                // };
                             }}
                         >
                             <FaSignOutAlt size={20} /> Sign out

@@ -263,7 +263,7 @@ const StaffGeneralForm = () => {
         }
 
         checkIfUserHasFilledTheForm()
-    }, [id])
+    }, [id, user?.email])
 
     useEffect(() => {
         const checkforStaffRole = async () => {
@@ -287,7 +287,7 @@ const StaffGeneralForm = () => {
         }
         checkforStaffRole()
 
-    }, [id])
+    }, [id, user?.email])
 
     return (
         <div >
