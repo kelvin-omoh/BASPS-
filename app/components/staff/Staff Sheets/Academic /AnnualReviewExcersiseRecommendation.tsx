@@ -48,7 +48,7 @@ const AnnualReviewExcersiseRecommendation: React.FC = () => {
             e.preventDefault();
             console.log(formData);
             const userRef = ref(DB, 'baps/reports/AnnualReviewExcersiseRecommendation/');
-            push(userRef, formData);
+            await push(userRef, formData);
 
             toast.success('Successfully filled !!!!')
         } catch (error) {

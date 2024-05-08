@@ -32,7 +32,7 @@ const SummaryOfAssessmentSheet = () => {
         try {
             e.preventDefault();
             const userRef = ref(DB, 'baps/reports/SummaryOfAssessmentSheet/');
-            push(userRef, formData);
+            await push(userRef, formData);
             toast.success('Successfully filled !!!!')
         } catch (error) {
             toast.error("An error occured,try again !!!!")

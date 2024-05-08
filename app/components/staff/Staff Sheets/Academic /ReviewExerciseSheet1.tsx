@@ -41,7 +41,7 @@ const ReviewExerciseSheet1 = () => {
             e.preventDefault();
 
             const userRef = await ref(DB, 'baps/reports/ReviewExerciseSheet1/');
-            await set(userRef, formData);
+            await push(userRef, formData);
 
             toast.success('Successfully filled !!!!')
         } catch (error) {
