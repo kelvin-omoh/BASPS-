@@ -1,12 +1,14 @@
 'use client'
-import { DB } from '@/app/firebaseConfig';
+import { app } from '@/app/firebaseConfig';
+// import { DB } from '@/app/firebaseConfig';
 import { Textarea } from '@nextui-org/react'
 import axios from 'axios';
-import { push, ref, set } from 'firebase/database';
+import { getDatabase, push, ref, set } from 'firebase/database';
 import React, { useState } from 'react'
 import toast from 'react-hot-toast';
 
 const ReviewExerciseSheet1 = () => {
+    const DB = getDatabase(app);
 
     const [formData, setFormData] = useState({
         collegeName: '',

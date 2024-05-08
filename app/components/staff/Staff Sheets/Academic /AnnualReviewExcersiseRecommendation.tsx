@@ -3,7 +3,7 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Textar
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { push, ref } from 'firebase/database';
-import { DB } from '@/app/firebaseConfig';
+import { DB } from '../../../../firebaseConfig';
 
 interface FormData {
     collegeName: string;
@@ -48,7 +48,7 @@ const AnnualReviewExcersiseRecommendation: React.FC = () => {
             e.preventDefault();
             console.log(formData);
             const userRef = ref(DB, 'baps/reports/AnnualReviewExcersiseRecommendation/');
-            await push(userRef, formData);
+            push(userRef, formData);
 
             toast.success('Successfully filled !!!!')
         } catch (error) {
