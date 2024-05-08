@@ -114,7 +114,7 @@ const StaffGeneralForm = () => {
 
     const handleClick = () => {
         if (buttonRef.current) {
-            alert()
+
             // Trigger click on the button in ComponentB
             buttonRef.current?.click();
         }

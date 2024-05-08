@@ -1,5 +1,7 @@
+import { DB } from '@/app/firebaseConfig';
 import { Textarea } from '@nextui-org/react'
 import axios from 'axios';
+import { push, ref } from 'firebase/database';
 import React, { useState } from 'react'
 import toast from 'react-hot-toast';
 
@@ -33,14 +35,13 @@ const ReviewExerciseSheet1 = () => {
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
         try {
             e.preventDefault();
-            const res = await axios.post(`http://localhost:1337/api/review-exercise-sheet1s`, { data: { ...formData } }, {
-                headers: {
-                    'Authorization': 'Bearer ' + process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
-                }
-            })
-            console.log(res.data);
+
+            const userRef = ref(DB, 'baps/reports/ReviewExerciseSheet1/');
+            push(userRef, formData);
+
             toast.success('Successfully filled !!!!')
         } catch (error) {
             toast.error("An error occured,try again !!!!")

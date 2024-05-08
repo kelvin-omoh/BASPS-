@@ -6,6 +6,8 @@ import CountryList from '../../CountryList';
 import countryList from 'react-select-country-list';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { DB } from '@/app/firebaseConfig';
+import { push, ref } from 'firebase/database';
 
 const NonAcademicJuniorStaff: React.FC<any> = ({ buttonRef }) => {
     const { user, error, isLoading } = useUser();
@@ -70,17 +72,16 @@ const NonAcademicJuniorStaff: React.FC<any> = ({ buttonRef }) => {
         console.log(JSON.stringify(body));
         try {
             e.preventDefault();
-            const res = await axios.post(`http://localhost:1337/api/non-academic-junior-staffs`, body, {
-                headers: {
-                    'Authorization': 'Bearer ' + process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
-                }
-            })
-            console.log(res.data);
+
+
+            const userRef = ref(DB, 'baps/nonacademic-junior-staff/');
+            const res = push(userRef, body);
+
             toast.success('Successfully filled !!!!')
 
         } catch (error: any) {
             // toast.error('An error occured ,Try again!', error?.response?.data?.error?.message)
-            toast.error('Try again !!, email already taken', error?.response?.data?.error?.message);
+            toast.error('An error occured ,Try again!');
 
             console.log(error);
         }

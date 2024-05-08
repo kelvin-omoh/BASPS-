@@ -56,17 +56,20 @@ export default function Home() {
     { name: 'snail', type: "NonMammal" },
     { name: 'chicken', type: "NonMammal" },
     { name: 'lion', type: "Mammal" },
-
-
   ]
 
 
   const tempObject: any = {}
+  const sa = {
+    name: "ade"
+  }
   animals.forEach((element: any) => {
     if (tempObject[element.type] === undefined) {
 
       tempObject[element.type] = []
     }
+    // console.log(tempObject[element.type]);
+    // console.log(sa['name']);
 
     tempObject[element.type].push(element)
   });

@@ -5,6 +5,8 @@ import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import CountryList from '../../CountryList';
 import countryList from 'react-select-country-list';
+import { DB } from '@/app/firebaseConfig';
+import { push, ref } from 'firebase/database';
 
 
 const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
@@ -82,12 +84,9 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
         console.log(JSON.stringify(body));
         try {
             e.preventDefault();
-            const res = await axios.post(`http://localhost:1337/api/non-academic-senior-staffs`, body, {
-                headers: {
-                    'Authorization': 'Bearer ' + process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
-                }
-            })
-            console.log(res.data);
+            const userRef = ref(DB, 'baps/nonacademic-senior-staff/');
+            const res: any = push(userRef, body);
+            console.log(res?.data);
             toast.success('Successfully filled !!!!')
 
         } catch (error: any) {
