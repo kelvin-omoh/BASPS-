@@ -1,8 +1,8 @@
-
+'use client'
 import { DB } from '@/app/firebaseConfig';
 import { Textarea } from '@nextui-org/react'
 import axios from 'axios';
-import { push, ref } from 'firebase/database';
+import { push, ref, set } from 'firebase/database';
 import React, { useState } from 'react'
 import toast from 'react-hot-toast';
 
@@ -40,8 +40,8 @@ const ReviewExerciseSheet1 = () => {
         try {
             e.preventDefault();
 
-            const userRef = ref(DB, 'baps/reports/ReviewExerciseSheet1/');
-            push(userRef, formData);
+            const userRef = await ref(DB, 'baps/reports/ReviewExerciseSheet1/');
+            await set(userRef, formData);
 
             toast.success('Successfully filled !!!!')
         } catch (error) {
