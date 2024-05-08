@@ -2,8 +2,9 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Textarea } from "@nextui-org/react";
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { push, ref } from 'firebase/database';
-import { DB } from '../../../../firebaseConfig';
+import { getDatabase, push, ref } from 'firebase/database';
+import { app } from '@/app/firebaseConfig';
+
 
 interface FormData {
     collegeName: string;
@@ -21,6 +22,7 @@ interface FormData {
 }
 
 const AnnualReviewExcersiseRecommendation: React.FC = () => {
+    const DB = getDatabase(app);
     const [formData, setFormData] = useState<any>({
         collegeName: '',
         departmentName: '',

@@ -1,11 +1,12 @@
 'use client'
-import { DB } from '@/app/firebaseConfig';
+import { app } from '@/app/firebaseConfig';
 import { Checkbox, Input } from '@nextui-org/react'
-import { push, ref } from 'firebase/database';
+import { getDatabase, push, ref } from 'firebase/database';
 import React, { useState } from 'react'
 import toast from 'react-hot-toast';
 
 const AnnualPerformanceEvaluationReportAcademicStaff = () => {
+    const DB = getDatabase(app);
     const [formData, setFormData] = useState<{
         periodFrom: string;
         periodUnto: string;
