@@ -13,9 +13,9 @@ const Page = () => {
     // const [appraiseModal, setAppraiseModal] = useState(false)
     return (
         <div className=' relative p-3'>
-            {appraiseModal &&
+            {/* {appraiseModal &&
                 <ReviewModal isOpen={appraiseModal} onOpen={onOpen} onOpenChange={onOpenChange} />
-            }
+            } */}
 
             <StaffTable />
 

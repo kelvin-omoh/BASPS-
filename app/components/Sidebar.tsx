@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useMemo } from 'react'
 import Logo2 from '../assets/logo.png'
 import Image from 'next/image'
 import { BsBarChartSteps, BsBookHalf, BsGraphUpArrow, BsHouse, BsPaperclip, BsPerson, BsPersonFillSlash, BsSunFill, BsWindowSplit } from 'react-icons/bs'
@@ -10,8 +10,11 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useStaffStore } from '../Store/Store'
+import { UserRole } from '@prisma/client'
+import axios from 'axios'
 const Sidebar = () => {
     const { user, error, isLoading } = useUser();
+    const SystemData = useStaffStore((state: any) => state.systemData)
     const systemRole = useStaffStore((state: any) => state.user)
 
     const router = useRouter()
@@ -240,7 +243,29 @@ const Sidebar = () => {
         },
     ]
 
-    console.log(systemRole.role);
+    console.log(systemRole);
+    console.log(SystemData);
+
+    useMemo(() => {
+        const handleStoreUser = async () => {
+            if (user) {
+                try {
+                    const res = await axios.post(`/api/storeUser/`, {
+                        fullName: user?.name,
+
+                        email: user?.email,
+                        staffRole: SystemData.data.role,
+
+                    });
+                    console.log("Response data:", JSON.stringify(res.data));
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+            }
+        }
+        handleStoreUser()
+    }, [user])
+
 
     return (
         <div className=' w-full '>
@@ -256,14 +281,14 @@ const Sidebar = () => {
 
 
                 {
-                    systemRole.role !== "USER"
+                    SystemData?.data?.systemRole !== "USER" && user
                         ?
-                        staffSideNavigation.map((role, i) => (
+                        SideNavigations.map((role, i) => (
                             <Link key={i} className={`hover:bg-[#282828af] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-100 transition-all delay-74 my-5 flex items-center gap-3  ${pathname === role.to && "bg-[#282828] shadow-md border-white border"}`} href={`${role.to}`}>{role.icon}{role.text}</Link>
 
                         ))
                         :
-                        user ?
+                        SystemData?.data?.systemRole ?
                             <>
                                 {staffSideNavigation.map(e => (
                                     <Link key={e.id} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 my-5 flex items-center gap-3' href={`${e.to}`}>{e.icon}{e.text}</Link>

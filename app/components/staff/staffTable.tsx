@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
     Table,
     TableHeader,
@@ -22,12 +22,16 @@ import {
     useDisclosure
 } from "@nextui-org/react";
 
+import { getDatabase, ref, onValue, remove } from "firebase/database";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 
 import { BsChevronBarDown, BsPlus, BsSearch, BsThreeDotsVertical } from "react-icons/bs";
 import Form from "./StaffForm";
 import StaffForm from "./StaffForm";
 import ReviewModal from "./Modals/ReviewModal";
 import { useStaffStore } from "@/app/Store/Store";
+import { app } from "@/app/firebaseConfig";
+import SingleUserView from "./Modals/SingleUserView";
 
 
 
@@ -35,11 +39,12 @@ import { useStaffStore } from "@/app/Store/Store";
 const columns = [
     { name: "ID", uid: "id", sortable: true },
     { name: "NAME", uid: "name", sortable: true },
-    { name: "AGE", uid: "age", sortable: true },
+
     { name: "ROLE", uid: "role", sortable: true },
-    { name: "TEAM", uid: "team" },
+    { name: "TYPE", uid: "type" },
+    { name: "COLLEGE", uid: "college" },
+    { name: "DEPARTMENT", uid: "department" },
     { name: "EMAIL", uid: "email" },
-    { name: "STATUS", uid: "status", sortable: true },
     { name: "ACTIONS", uid: "actions" },
 ];
 
@@ -48,6 +53,10 @@ const statusOptions = [
     { name: "Paused", uid: "paused" },
     { name: "Vacation", uid: "vacation" },
 ];
+
+
+
+
 
 const users = [
     {
@@ -264,12 +273,13 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 type User = typeof users[0];
 
 export default function App() {
-    const [filterValue, setFilterValue] = React.useState("");
-    const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
-    const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
-    const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
+    const [allSavedUsers, setAllSavedUsers] = useState<any>([])
+    const [filterValue, setFilterValue] = useState("");
+    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
+    const [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
+    const [statusFilter, setStatusFilter] = useState<Selection>("all");
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
         column: "age",
         direction: "ascending",
     });
@@ -277,15 +287,102 @@ export default function App() {
 
     const addNewStaff = useStaffStore((state: any) => state.addNewStaff)
 
-
+    const [viewUser, setViewUser] = useState<object>({})
     const appraiseNewStaff = useStaffStore((state: any) => state.appraiseNewStaff)
     const toggle = useStaffStore((state: any) => state.toggle)
     const setToggle = useStaffStore((state: any) => state.setToggle)
     const appraiseModal = useStaffStore((state: any) => state.appraiseModal)
 
+
+    const AllUsers: any = []
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const db = getDatabase(app);
+                const starCountRef = ref(db, "/baps/");
+                onValue(starCountRef, (snapshot) => {
+                    const data = snapshot.val();
+                    const users = [];
+
+                    // Fetch academic staff
+                    for (const key in data.academicstaff) {
+                        const staff = data.academicstaff[key].data;
+                        users.push({
+                            id: key,
+                            name: staff.name,
+                            role: "lecturer",
+                            college: staff.college,
+                            department: staff.department,
+                            type: "academic-staff",
+                            email: staff.email
+                        });
+                    }
+                    // Fetch non-academic junior staff
+                    for (const key in data['nonacademic-junior-staff']) {
+                        const nonAcademicJuniorStaff = data['nonacademic-junior-staff'][key].data;
+                        users.push({
+                            id: key,
+                            name: nonAcademicJuniorStaff.fullName,
+                            role: "USER",
+                            college: nonAcademicJuniorStaff.collegeName,
+                            department: nonAcademicJuniorStaff.department,
+                            type: "nonacademic-junior-staff",
+                            email: nonAcademicJuniorStaff.emailAddress
+                        });
+                    }
+                    // Fetch non-academic senior staff
+                    for (const key in data['nonacademic-senior-staff']) {
+                        const nonAcademicSeniorStaff = data['nonacademic-senior-staff'][key].data;
+                        users.push({
+                            id: key,
+                            name: nonAcademicSeniorStaff.fullName,
+                            role: "USER",
+                            college: "",
+                            department: nonAcademicSeniorStaff.department,
+                            type: "non-academic-senior-staff",
+                            email: nonAcademicSeniorStaff.emailAddress
+                        });
+                    }
+                    setAllSavedUsers(users);
+                    AllUsers.push(users)
+                });
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
+
+        return () => { }
+    }, []);
+
     const handleViewClick = useCallback((selectedUser: User) => {
         addNewStaff(selectedUser);
     }, [addNewStaff]);
+
+    const handleDeleteUser = (user: any) => {
+        // Display confirmation dialog
+        const isConfirmed = window.confirm(`Are you sure you want to delete ${user.name}?`);
+
+        if (isConfirmed) {
+            const db = getDatabase(app);
+            if (user.type === 'academic-staff') {
+                console.log(
+                    ref(db, "/baps/academicstaff/" + user?.id))
+
+                const staffRef = ref(db, "/baps/academicstaff/" + user?.id)
+                remove(staffRef)
+
+            }
+            console.log(user);
+        } else {
+            console.log("User deletion cancelled.");
+        }
+    }
+
+
+    console.log(allSavedUsers);
 
 
 
@@ -300,7 +397,7 @@ export default function App() {
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredUsers = [...users];
+        let filteredUsers = [...allSavedUsers];
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) =>
@@ -314,7 +411,7 @@ export default function App() {
         }
 
         return filteredUsers;
-    }, [filterValue, statusFilter, hasSearchFilter]);
+    }, [filterValue, statusFilter, hasSearchFilter, allSavedUsers]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -373,24 +470,26 @@ export default function App() {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem>
+                                {/* <DropdownItem>
                                     <Button
                                         className=" w-full"
                                         onPress={() => {
                                             onOpen()
-                                            handleViewClick(user)
+                                            // handleViewClick(user)
+
                                             appraiseNewStaff(true)
 
                                         }}
                                     >Appraise
                                     </Button>
 
-                                </DropdownItem>
+                                </DropdownItem> */}
                                 <DropdownItem>
                                     <Button
                                         className=" w-full"
                                         onPress={() => {
                                             onOpen()
+                                            setViewUser(user)
                                             handleViewClick(user)
                                         }}
                                     >
@@ -398,24 +497,14 @@ export default function App() {
                                     </Button>
 
                                 </DropdownItem>
-                                <DropdownItem>
-                                    <Button
-                                        className=" w-full"
-                                        onPress={() => {
-                                            onOpen()
-                                            handleViewClick(user)
-                                        }}
-                                    >
-                                        Edit
-                                    </Button>
 
-                                </DropdownItem>
                                 <DropdownItem>
                                     <Button
                                         className=" w-full"
                                         onPress={() => {
                                             onOpen()
-                                            handleViewClick(user)
+
+                                            handleDeleteUser(user)
                                         }}
                                     >
                                         Delete
@@ -529,7 +618,7 @@ export default function App() {
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {users.length} staffs</span>
+                    <span className="text-default-400 text-small">Total {allSavedUsers.length} staffs</span>
                     <label className="flex items-center text-default-400 text-small">
                         Rows per page:
                         <select
@@ -587,7 +676,7 @@ export default function App() {
 
     return (
         <>
-
+            <SingleUserView user={viewUser} isOpen={isOpen} onOpen={onOpen} onOpenChange={onOpenChange} />
             <Table
                 aria-label="Example table with custom cells, pagination and sorting"
                 isHeaderSticky

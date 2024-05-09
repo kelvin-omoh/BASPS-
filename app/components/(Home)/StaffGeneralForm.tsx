@@ -29,18 +29,18 @@ const StaffGeneralForm = () => {
     console.log(process.env.NEXT_PUBLIC_STRAPI_API_TOKEN);
 
     const handleStoreUser = async () => {
-        if (user) {
-            try {
-                const res = await axios.post(`/api/storeUser/`, {
-                    fullName: user?.name,
-                    email: user?.email,
-                    staffRole: UserInStore.role
-                });
-                console.log("Response data:", JSON.stringify(res.data));
-            } catch (error) {
-                console.error("Error:", error);
-            }
-        }
+        // if (user) {
+        //     try {
+        //         const res = await axios.post(`/api/storeUser/`, {
+        //             fullName: user?.name,
+        //             email: user?.email,
+        //             staffRole: UserInStore.role
+        //         });
+        //         console.log("Response data:", JSON.stringify(res.data));
+        //     } catch (error) {
+        //         console.error("Error:", error);
+        //     }
+        // }
     }
 
     const handleStaffChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

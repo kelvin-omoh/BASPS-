@@ -42,7 +42,7 @@ const StaffTypeTabs: React.FC<any> = ({ isSent, AcademicformData, handleStoreFor
             <Card className="max-w-full relative z-1 w-full h-[400px]">
                 <CardBody className="overflow-hidden scroll-smooth  delay-75  transition-all ">
                     <Tabs
-                        disabledKeys={roleDisabledKeys}
+                        // disabledKeys={roleDisabledKeys}
 
                         fullWidth
                         size="md"

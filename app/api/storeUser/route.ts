@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export const POST = async (req: Request) => {
     try {
-        const { email, fullName, staffRole } = await req.json();
+        const { email, fullName, staffRole, systemRole } = await req.json();
         console.log(email);
 
         if (!fullName || !email) {
@@ -26,15 +26,30 @@ export const POST = async (req: Request) => {
 
         } else {
             // Insert the new user
-            const newUser = await prisma.user.create({
-                data: {
-                    fullName,
-                    email,
-                    staffRole,
-                }
-            });
+            if (systemRole) {
+                const newUser = await prisma.user.create({
+                    data: {
+                        fullName,
+                        email,
+                        staffRole,
+                        systemRole
+                    }
+                });
+                console.log(newUser);
+            }
+            else {
+                const newUser = await prisma.user.create({
+                    data: {
+                        fullName,
+                        email,
+                        staffRole,
 
-            console.log(newUser);
+                    }
+                });
+                console.log(newUser);
+            }
+
+
 
             return new NextResponse('User stored successfully.', { status: 200 });
         }
