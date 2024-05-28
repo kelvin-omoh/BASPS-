@@ -676,7 +676,7 @@ export default function App() {
 
     return (
         <>
-            <SingleUserView user={viewUser} isOpen={isOpen} onOpen={onOpen} onOpenChange={onOpenChange} />
+            <SingleUserView user={viewUser} />
             <Table
                 aria-label="Example table with custom cells, pagination and sorting"
                 isHeaderSticky

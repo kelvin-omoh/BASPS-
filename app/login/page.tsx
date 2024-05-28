@@ -1,32 +1,32 @@
-'use client'
-import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
-import logo from "../assets/logo.png"
-import bg from "../assets/bg.jpg"
-import Link from 'next/link'
-import { BsArrowRight, BsBook, BsClock, BsDownload, BsPeople } from "react-icons/bs"
-import { useRouter } from 'next/navigation'
-import { Select, SelectItem, button } from "@nextui-org/react";
-import { useUser } from '@auth0/nextjs-auth0/client'
-import { useStaffStore } from '../Store/Store'
-import { userInfo } from 'os'
-import axios from 'axios'
-
-
+'use client';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import logo from "../assets/logo.png";
+import bg from "../assets/bg.jpg";
+import Link from 'next/link';
+import { BsArrowRight, BsBook, BsClock, BsDownload, BsPeople } from "react-icons/bs";
+import { useRouter } from 'next/navigation';
+import { Select, SelectItem } from "@nextui-org/react";
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../firebaseConfig';
+import { useStaffStore } from '../Store/Store';
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import axios from 'axios';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 interface Istaff {
-    value: string
+    value: string;
 }
 
-
 const Page = () => {
-    const Logo = logo
-    const router = useRouter()
-    const { user, error, isLoading } = useUser();
-    const [staffRole, setStaffRole] = useState('')
-    const addUserRole = useStaffStore((state: any) => state.addUserRole)
-    const UserInStore = useStaffStore((state: any) => state.user)
+    const Logo = logo;
+    const router = useRouter();
+    const [user] = useAuthState(auth);
+    const [staffRole, setStaffRole] = useState('');
+    const addUserRole = useStaffStore((state: any) => state.addUserRole);
+    const UserInStore = useStaffStore((state: any) => state.user);
 
+  
 
     const mainfeatures = [
         {
@@ -41,7 +41,6 @@ const Page = () => {
             mainText: "View our Product Roadmap",
             subText: "Browse and vote on what's next."
         },
-
         {
             id: 3,
             icon: <BsDownload size={20} />,
@@ -51,12 +50,10 @@ const Page = () => {
         {
             id: 4,
             icon: <BsPeople size={20} />,
-            mainText: "Join our Slack Communitys",
+            mainText: "Join our Slack Community",
             subText: "Discuss with hundreds of Corellium users."
         },
-
-    ]
-
+    ];
 
     const StaffType = [
         {
@@ -89,18 +86,16 @@ const Page = () => {
         addUserRole(userRole);
 
         console.log(UserInStore);
-
     };
 
 
+
     const handleLoginForStaff = async () => {
-
-
         if (user) {
             try {
                 const res = await axios.post(`/api/storeUser/`, {
-                    fullName: user?.name,
-                    email: user?.email,
+                    fullName: user.displayName,
+                    email: user.email,
                     staffRole: UserInStore.role
                 });
                 console.log("Response data:", res.data);
@@ -108,79 +103,45 @@ const Page = () => {
                 console.error("Error:", error);
             }
         }
+    };
 
-    }
+    const signInWithGoogle = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            await signInWithPopup(auth, provider);
 
-    // useEffect(() => {
-    //     if (user?.email) {
-    //         handleLoginForStaff();
-    //     }
-    // }, [user]);
+        } catch (error) {
+            console.error("Error during sign-in:", error);
+        }
+    };
 
-
-
-
+    useEffect(() => {
+        if (user?.email) {
+            handleLoginForStaff();
+        }
+    }, [user]);
 
     return (
-        <div
-            className=' w-full    h-screen grid  grid-cols-2     '
-        >
-
-            <div className='   p-[4rem]  rounded-lg text-center flex flex-col justify-center items-center  '>
-                <Image src={Logo} alt={'logo'} className=' w-[4rem] ' />
-                <h1 className=' font-semibold'>Welcome To BAPS</h1>
-
-
+        <div className='w-full h-screen grid grid-cols-2'>
+            <div className='p-[4rem] rounded-lg text-center flex flex-col justify-center items-center'>
+                <Image src={logo} alt={'logo'} className='w-[4rem]' />
+                <h1 className='font-semibold'>Welcome To BAPS</h1>
 
                 {/* FORM */}
-                <form onSubmit={(e) => e.preventDefault()} className=' flex flex-col gap-3 mt-11 w-[70%]' action="">
-
-                    {/* <p className=' text-gray-600 '>select your staff type then   sign-in .</p> */}
-
-                    {/* <Select
-                        label="Staff"
-                        placeholder="Select your staff type"
-                        isRequired
-                        // defaultSelectedKeys={["1"]}
-                        className=""
-                        onChange={handleStaffChange}
-                        value={staffRole}
-                    >
-                        {StaffType.map((staff) => (
-                            <SelectItem key={staff.label} value={staff.text}>
-                                {staff.text}
-                            </SelectItem>
-                        ))}
-                    </Select> */}
-
-
-                    <button onClick={() => {
-
-                        router.push("/api/auth/login")
-
-
-                    }} className=' my-8 text-white bg-black  rounded-lg p-3 '>
+                <form onSubmit={(e) => e.preventDefault()} className='flex flex-col gap-3 mt-11 w-[70%]'>
+                    <button onClick={signInWithGoogle} className='my-8 text-white bg-black rounded-lg p-3'>
                         Continue to login In
                     </button>
-
-                    <p>sign-in here as an Adminstrator ? <Link href={'/'} className=' underline font-semibold text-blue-700'>Admin only</Link></p>
-
-                    {/* <SignUpButton /> */}
-
-
-
+                    <p>sign-in here as an Adminstrator? <Link href={'/'} className='underline font-semibold text-blue-700'>Admin only</Link></p>
                 </form>
             </div>
             <div
-                className=' w-full'
+                className='w-full'
                 style={{
-                    // use the src property of the image object
                     backgroundImage: `url(${bg.src})`,
-                    // other styles
                     backgroundPosition: "center",
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
-
                     color: "white",
                     height: "100vh",
                     display: 'flex',
@@ -188,33 +149,27 @@ const Page = () => {
                     justifyContent: 'center'
                 }}
             >
-
-                <ul className=' w-full flex flex-col gap-4'>
+                <ul className='w-full flex flex-col gap-4'>
                     {mainfeatures.map(feature => (
-                        <li key={feature.id} className=' my-3 bg-gray-500/10  rounded-md p-3  flex  justify-between items-center gap-4'>
-                            <div className=' flex gap-3 items-center justify-center'>
-                                <button className=' p-5 rounded-lg bg-gray-200/20 '>
+                        <li key={feature.id} className='my-3 bg-gray-500/10 rounded-md p-3 flex justify-between items-center gap-4'>
+                            <div className='flex gap-3 items-center justify-center'>
+                                <button className='p-5 rounded-lg bg-gray-200/20'>
                                     {feature.icon}
                                 </button>
-
-                                <div className=' flex-start flex flex-col'>
-                                    <h1 className=' text-[18px] font-semibold'>{feature.mainText}</h1>
-                                    <p className='  text-gray-300'>{feature.subText} </p>
+                                <div className='flex-start flex flex-col'>
+                                    <h1 className='text-[18px] font-semibold'>{feature.mainText}</h1>
+                                    <p className='text-gray-300'>{feature.subText}</p>
                                 </div>
                             </div>
-
-                            <button className=' mx-5   a  w-[10%] flex justify-end '><BsArrowRight size={30} className=' text-gray-300 ' />
+                            <button className='mx-5 w-[10%] flex justify-end'>
+                                <BsArrowRight size={30} className='text-gray-300' />
                             </button>
                         </li>
                     ))}
-
-
-
-
                 </ul>
             </div>
-        </div >
-    )
-}
+        </div>
+    );
+};
 
-export default Page
+export default Page;

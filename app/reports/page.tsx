@@ -10,12 +10,21 @@ import BehaviouralAtrributesheet from '../components/staff/Staff Sheets/Academic
 import SummaryOfAssessmentSheet from '../components/staff/Staff Sheets/Academic /SummaryOfAssessmentSheet';
 import { useStaffStore } from '../Store/Store';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const Page = () => {
     const [selectedReport, setSelectedReport] = useState("Recomemdation sheet for Annual  Review Excersise (sheet 1)");
     const { user, error, isLoading } = useUser();
     const UserRole = useStaffStore((state: any) => state.user)
     // const [checkFormIfFilled, setCheckFormIfFilled] = useState(false)
+
+    const router = useRouter()
+    useEffect(() => {
+        if (!user) {
+            router.push("/login"); // Redirect to dashboard if user is logged in
+        }
+    }, [!user]);
+
     const breadCrumbs = [
         {
             key: "Recomemdation sheet for Annual  Review Excersise (sheet 1)",

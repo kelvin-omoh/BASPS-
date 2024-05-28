@@ -1,6 +1,6 @@
 "use client"
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect } from 'react'
 import logo from "../assets/logo.png"
 import bg from "../assets/bg.jpg"
 import Link from 'next/link'
@@ -36,6 +36,12 @@ import {
     Legend,
 } from 'chart.js';
 import { useUser } from '@auth0/nextjs-auth0/client';
+
+import { useStaffStore } from '../Store/Store'
+import { FaUser } from 'react-icons/fa'
+import { useRouter } from 'next/navigation'
+import { auth } from '../firebaseConfig'
+import { useAuthState } from 'react-firebase-hooks/auth'
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -61,38 +67,12 @@ const randomNumbersDataset1 = Array.from({ length: BarChartlabels.length }, () =
 const randomNumbersDataset2 = Array.from({ length: BarChartlabels.length }, () => Math.floor(Math.random() * (1000 - 0 + 1)));
 
 
-// export const BarChartdata = {
-//     BarChartlabels,
-//     datasets: [
-//         {
-//             label: 'Dataset 1',
-//             data: BarChartlabels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-//             backgroundColor: 'rgba(255, 99, 132, 0.5)',
-//         },
-//         {
-//             label: 'Dataset 2',
-//             data: BarChartlabels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-//             backgroundColor: 'rgba(53, 162, 235, 0.5)',
-//         },
-//     ],
-// };
-
-
-// export const BarChartoptions = {
-//     responsive: true,
-//     plugins: {
-//         legend: {
-//             position: 'top' as const,
-//         },
-//         title: {
-//             display: true,
-//             text: 'Chart.js Bar Chart',
-//         },
-//     },
-// };
-
-
-
+interface IUser {
+    uid: string;
+    email: string | null;
+    displayName: string | null;
+    photoURL: string | null;
+}
 
 const Page = () => {
 
@@ -132,8 +112,15 @@ const Page = () => {
     ];
 
 
-    const { user, error, isLoading } = useUser();
 
+    const { profile, setProfile } = useStaffStore((state: any) => state);
+    const [user] = useAuthState(auth);
+    const router = useRouter()
+    useEffect(() => {
+        if (!user) {
+            router.push("/login"); // Redirect to dashboard if user is logged in
+        }
+    }, [!user]);
 
     const performanceColumns = [
         {
@@ -146,43 +133,38 @@ const Page = () => {
         },
 
     ];
+    console.log(user);
 
 
     const School_Profile = [
         {
-            key: " college",
-            label: "college :  COLNAS",
+            key: "college",
+            label: `college : ${profile.college || ''}`,
         },
-
         {
-            key: "Depeartment",
-            label: "Depeartment : Computer science and Technology",
+            key: "department",
+            label: `department : ${profile.department || ''}`,
         },
         {
             key: "telephone",
-            label: "telephone : 09073597660",
+            label: `telephone : ${profile.phone || ''}`,
         },
         {
             key: "email",
-            label: `email : ${user?.email}`,
+            label: `email : ${profile.email || ''}`,
         },
         {
             key: "presentPosition",
-            label: "presentPosition : HOD",
+            label: `presentPosition : ${profile.presentPosition || ''}`,
         },
         {
             key: "dateOfFirstAppointment",
-            label: "date Of First Appointment: 12th May  2009",
+            label: `date Of First Appointment: ${profile.dateOfFirstAppointment || ''}`,
         },
         {
-            key: "dateOfFirstAppointment",
-            label: "date Of Confirmation Appointment : 30th May 2009",
+            key: "dateOfConfirmationAppointment",
+            label: `date Of Confirmation Appointment : ${profile.dateOfConfirmationAppointment || ''}`,
         },
-        // {
-        //     key: "Permission",
-        //     label: "Permission",
-        // },
-
     ];
 
 
@@ -210,14 +192,6 @@ const Page = () => {
     ]
 
 
-    const animals = [
-        { label: "Cat", value: "cat", description: "The second most popular pet in the world" },
-        { label: "Dog", value: "dog", description: "The most popular pet in the world" },
-        { label: "Elephant", value: "elephant", description: "The largest land animal" },
-        { label: "Lion", value: "lion", description: "The king of the jungle" },
-        { label: "Tiger", value: "tiger", description: "The largest cat species" },
-        { label: "Giraffe", value: "giraffe", description: "The tallest land animal" },
-    ]
 
 
 
@@ -270,7 +244,8 @@ const Page = () => {
                                 className='   border-[5px] border-gray-500  rounded-full h-[7rem] w-[7rem]     object-cover '
 
                             >
-                                <Image className=' w-full h-full rounded-full ' src={user1} alt='user' />
+                                {user ? <Image className=' w-full h-full rounded-full ' src={profile ? profile.profileImage : user1} width="1000" height={1000} alt='user' /> :
+                                    <FaUser size={30} className=' w-full h-full rounded-full ' width="1000" height={1000} />}
                                 <div className=' w-full relative'>
                                     <div className=' px-2 py-2  bg-green-600  absolute bottom-3  right-[2%] w-1 rounded-full'></div>
                                 </div>
@@ -281,11 +256,11 @@ const Page = () => {
 
                         </div>
 
-                        <h1 className=' mt-[4rem]  text-gray-500 text-[14px]'>{user?.name}</h1>
+                        <h1 className=' mt-[4rem]  text-gray-500 text-[14px]'>{user?.displayName}</h1>
                         {/* Position */}
-                        <h1 className=' text-[16px]  text-gray-700 font-semibold'>Head of Department(HOD) <br />
+                        <h1 className=' text-[16px]  text-gray-700 font-semibold'>{profile && profile.position} <br />
                             <span className=' text-gray-500 '>
-                                ID- #2/7744
+                                ID- #{profile && profile.staffId}
                             </span>
 
                         </h1>

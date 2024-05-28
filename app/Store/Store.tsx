@@ -45,6 +45,8 @@ export const useStaffStore = create(
                 compulsoryForm: false,
                 setIfComulsoryFormIsFilled: () => set((state: any) => ({ compulsoryForm: !state.compulsoryForm })),
 
+                profile: {},
+                setProfile: (newProfile: any) => set({ profile: newProfile }),
 
 
             }), { name: 'staffStore' },

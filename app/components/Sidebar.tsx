@@ -8,20 +8,64 @@ import { FaSignInAlt, FaSignOutAlt } from 'react-icons/fa'
 import Link from 'next/link'
 
 import { usePathname, useRouter } from 'next/navigation'
-import { useUser } from '@auth0/nextjs-auth0/client';
 import { useStaffStore } from '../Store/Store'
 import { UserRole } from '@prisma/client'
+import { useAuthState } from 'react-firebase-hooks/auth'; // Import useAuthState from react-firebase-hooks/auth
+import { auth } from '../firebaseConfig'; // Import your Firebase auth instance
 import axios from 'axios'
+import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
 const Sidebar = () => {
-    const { user, error, isLoading } = useUser();
+
+    const [user, loading, error] = useAuthState(auth); // Use useAuthState hook with your Firebase auth instance
     const SystemData = useStaffStore((state: any) => state.systemData)
     const systemRole = useStaffStore((state: any) => state.user)
 
     const router = useRouter()
 
+
     const pathname = usePathname()
 
+    const { profile, setProfile } = useStaffStore((state: any) => state);
 
+    const handleLogin = async () => {
+        try {
+            const provider = new GoogleAuthProvider();
+            const auth = getAuth();
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    // This gives you a Google Access Token. You can use it to access the Google API.
+                    const credential: any = GoogleAuthProvider.credentialFromResult(result);
+                    const token = credential.accessToken;
+                    const user = result.user;
+                    console.log(user);
+
+
+                    // IdP data available using getAdditionalUserInfo(result)
+                    // ...
+                }).catch((error) => {
+                    // Handle Errors here.
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    // The email of the user's account used.
+                    const email = error.customData.email;
+                    // The AuthCredential type that was used.
+                    const credential = GoogleAuthProvider.credentialFromError(error);
+                    // ...
+                });
+        } catch (error) {
+            console.error("Error signing in:", error);
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            await auth.signOut();
+            setProfile({});
+            router.push("/"); // Redirect to home page after logout
+        } catch (error) {
+            console.error("Error signing out:", error);
+        }
+    };
 
 
     const allStaffNavigations = [
@@ -52,7 +96,7 @@ const Sidebar = () => {
             to: !user?.email ? "/login" : "/",
             icon: <nav className=' flex'>
 
-                {user?.email && <Image width={200} height={200} src={user?.picture || ''} alt="" className="w-6 h-6" />}
+                {user?.email && <Image width={200} height={200} src={user.photoURL || ''} alt="" className="w-6 h-6" />}
 
                 {
 
@@ -100,53 +144,29 @@ const Sidebar = () => {
 
         {
             id: 2,
-            text: "Staff",
-            to: "/staff",
+            text: "Fill appraisal",
+            to: "/reports",
             icon: <BsPerson size={20} />
         },
-        {
-            id: 3,
-            text: "Reports",
-            to: "/reports",
-            icon: <BsBookHalf size={20} />
-        },
+
         {
             id: 11,
             text: "",
             to: !user?.email ? "/login" : "/api/auth/logout",
             icon: <nav className=' flex'>
-                {user?.email && <Image width={200} height={200} src={user?.picture || ''} alt="" className="w-6 h-6" />}
-
-                {
-
-                    user?.email ?
-                        <button className=' hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 w-full  flex items-center  gap-3'
-                            onClick={() => {
-                                router.push("/api/auth/logout");
-                                // window.location.reload(); // Reload the page
-
-                                // After reloading the page, redirect to the login page
-                                window.onload = function () {
-                                    router.push("/api/auth/logout");
-                                };
-
-                            }}>
-
-                            <FaSignOutAlt size={20} />        Sign out
-
-                        </button> :
-
-
-                        <button onClick={() => router.push("/api/auth/login")} className=' hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74  flex items-center  gap-3'>
-                            <FaSignInAlt size={20} />       Login
-                        </button>
-                }
-
-
+                {user && <Image width={200} height={200} src={user.photoURL || ''} alt="" className="w-6 h-6" />}
+                {user ? (
+                    <button className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 w-full flex items-center gap-3' onClick={handleLogout}>
+                        <FaSignOutAlt size={20} /> Sign out
+                    </button>
+                ) : (
+                    <button onClick={handleLogin} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 flex items-center gap-3'>
+                        <FaSignInAlt size={20} /> Login
+                    </button>
+                )}
             </nav>
         },
-    ]
-
+    ];
 
 
 
@@ -209,53 +229,32 @@ const Sidebar = () => {
         {
             id: 11,
             text: "",
-            to: !user?.email ? "/login" : "/api/auth/logout",
+            to: user ? "/logout" : "/login",
             icon: <nav className=' flex'>
-                <Image width={200} height={200} src={user?.picture || ''} alt="" className="w-6 h-6" />
-
-                {
-
-                    user?.email ?
-                        <button className=' hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 w-full  flex items-center  gap-3'
-                            onClick={() => {
-                                router.push("/api/auth/logout");
-                                window.location.reload(); // Reload the page
-
-                                // After reloading the page, redirect to the login page
-                                window.onload = function () {
-                                    router.push("/logout");
-                                };
-
-                            }}>
-
-                            <FaSignOutAlt size={20} />        Sign out
-
-                        </button> :
-
-
-                        <button onClick={() => router.push("/api/auth/login")} className=' hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74  flex items-center  gap-3'>
-                            <FaSignInAlt size={20} />       Login
-                        </button>
-                }
-
-
+                {user && <Image width={200} height={200} src={user.photoURL || ''} alt="" className="w-6 h-6" />}
+                {user ? (
+                    <button className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 w-full flex items-center gap-3' onClick={handleLogout}>
+                        <FaSignOutAlt size={20} /> Sign out
+                    </button>
+                ) : (
+                    <button onClick={handleLogin} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 flex items-center gap-3'>
+                        <FaSignInAlt size={20} /> Login
+                    </button>
+                )}
             </nav>
         },
-    ]
+    ];
 
-    console.log(systemRole);
-    console.log(SystemData);
+
 
     useMemo(() => {
         const handleStoreUser = async () => {
             if (user) {
                 try {
                     const res = await axios.post(`/api/storeUser/`, {
-                        fullName: user?.name,
-
-                        email: user?.email,
+                        fullName: user.displayName,
+                        email: user.email,
                         staffRole: SystemData.data.role,
-
                     });
                     console.log("Response data:", JSON.stringify(res.data));
                 } catch (error) {

@@ -2,9 +2,10 @@
 import React from 'react'
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
 
-const SingleUserView: React.FC<any> = ({ user, isOpen, onOpen, onOpenChange }) => {
+const SingleUserView: React.FC<any> = ({ user }) => {
 
     console.log(user);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     return (
         <div>
