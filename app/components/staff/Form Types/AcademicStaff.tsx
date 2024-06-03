@@ -6,7 +6,7 @@ import CountryList from '../../CountryList';
 import countryList from 'react-select-country-list';
 import toast from 'react-hot-toast';
 
-import { push, ref, set } from "firebase/database";
+import { get, push, ref, set } from "firebase/database";
 import { DB } from '../../../firebaseConfig'
 
 
@@ -72,39 +72,54 @@ const AcademicStaff: React.FC<any> = ({ buttonRef }) => {
     };
 
 
-    // Function to handle form submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        console.log("lkkkkk");
+        e.preventDefault();
 
+        const email = formData.email; // Get the email from the form data
 
-        let body = {
-            data:
-            {
-                ...formData, dateOfBirth: new Date(formData.dateOfBirth).toISOString().slice(0, 10), // Convert dateOfBirth to yyyy-MM-dd format
-                dateOfFirstAppointment: new Date(formData.dateOfFirstAppointment).toISOString().slice(0, 10), // Convert dateOfFirstAppointment to yyyy-MM-dd format
-                dateOfConfirmationAppointment: new Date(formData.dateOfConfirmationAppointment).toISOString().slice(0, 10), // Convert dateOfConfirmationAppointment to yyyy-MM-dd format
-                dateOfPresentPosition: new Date(formData.dateOfPresentPosition).toISOString().slice(0, 10) // Convert dateOfPresentPosition to yyyy-MM-dd format
-            }
-        }
-
-        console.log(JSON.stringify(body));
         try {
-            e.preventDefault();
+            // Check if the email already exists in the database in each location
+            const locations = ['baps/nonacademic-junior-staff/', 'baps/academicstaff/', 'baps/nonacademic-senior-staff/'];
 
-            const userRef = ref(DB, 'baps/academicstaff/');
-            push(userRef, body);
+            for (const location of locations) {
+                const userRef = ref(DB, location);
+                const snapshot = await get(userRef);
+                const users = snapshot.val();
 
-            toast.success('Successfully filled !!!!')
+                for (const key in users) {
+                    if (users[key].data.email === email) {
+                        // If the email already exists, show a message and return
+                        toast.error('Email already exists in the database');
+                        return;
+                    }
+                }
+            }
 
-        } catch (error: any) {
-            // toast.error('An error occured ,Try again!', error?.response?.data?.error?.message)
-            toast.error('Try again !!,An error occured');
+            // If the email doesn't exist, proceed with form submission
+            let body = {
+                data: {
+                    ...formData,
+                    dateOfBirth: new Date(formData.dateOfBirth).toISOString().slice(0, 10), // Convert dateOfBirth to yyyy-MM-dd format
+                    dateOfFirstAppointment: new Date(formData.dateOfFirstAppointment).toISOString().slice(0, 10), // Convert dateOfFirstAppointment to yyyy-MM-dd format
+                    dateOfConfirmationAppointment: new Date(formData.dateOfConfirmationAppointment).toISOString().slice(0, 10), // Convert dateOfConfirmationAppointment to yyyy-MM-dd format
+                    dateOfPresentPosition: new Date(formData.dateOfPresentPosition).toISOString().slice(0, 10) // Convert dateOfPresentPosition to yyyy-MM-dd format
+                }
+            };
 
-            console.log(error);
+            console.log(JSON.stringify(body));
+
+            // Push the new user data to the database
+            push(ref(DB, 'baps/academicstaff/'), body);
+
+            // Show success message
+            toast.success('Successfully filled!');
+        } catch (error) {
+            // Show error message
+            toast.error('An error occurred. Please try again.');
+
+            console.error("Error submitting form:", error);
         }
-
     };
-
     // Function to check if all required fields are filled
     const isFormValid = () => {
         // Check if all required fields have non-empty values
@@ -453,7 +468,7 @@ const AcademicStaff: React.FC<any> = ({ buttonRef }) => {
                 </div>
             </div>
 
-            <button onClick={(e: any) => handleSubmit(e)} ref={buttonRef} className=' hidden' type="submit">Submit</button>
+            <button ref={buttonRef} className=' hidden' type="submit">Submit</button>
         </form>
     );
 };

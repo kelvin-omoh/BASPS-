@@ -151,7 +151,7 @@ const Page = () => {
         },
         {
             key: "email",
-            label: `email : ${profile.email || ''}`,
+            label: `email : ${user?.email || ''}`,
         },
         {
             key: "presentPosition",
@@ -244,7 +244,7 @@ const Page = () => {
                                 className='   border-[5px] border-gray-500  rounded-full h-[7rem] w-[7rem]     object-cover '
 
                             >
-                                {user ? <Image className=' w-full h-full rounded-full ' src={profile ? profile.profileImage : user1} width="1000" height={1000} alt='user' /> :
+                                {user ? <Image className=' w-full h-full rounded-full ' src={profile.profileImage ? profile.profileImage : user.photoURL} width="1000" height={1000} alt='user' /> :
                                     <FaUser size={30} className=' w-full h-full rounded-full ' width="1000" height={1000} />}
                                 <div className=' w-full relative'>
                                     <div className=' px-2 py-2  bg-green-600  absolute bottom-3  right-[2%] w-1 rounded-full'></div>
@@ -256,11 +256,13 @@ const Page = () => {
 
                         </div>
 
-                        <h1 className=' mt-[4rem]  text-gray-500 text-[14px]'>{user?.displayName}</h1>
+                        <h1 className=' mt-[4rem]  text-gray-500 text-[14px]'>Name: {user?.displayName}</h1>
                         {/* Position */}
                         <h1 className=' text-[16px]  text-gray-700 font-semibold'>{profile && profile.position} <br />
                             <span className=' text-gray-500 '>
                                 ID- #{profile && profile.staffId}
+
+
                             </span>
 
                         </h1>

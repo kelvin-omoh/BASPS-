@@ -20,10 +20,10 @@ const Page = () => {
 
     const router = useRouter()
     useEffect(() => {
-        if (!user) {
+        if (user) {
             router.push("/login"); // Redirect to dashboard if user is logged in
         }
-    }, [!user]);
+    }, [user]);
 
     const breadCrumbs = [
         {

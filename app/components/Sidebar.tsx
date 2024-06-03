@@ -135,19 +135,19 @@ const Sidebar = () => {
                 size={20} />
         },
         {
-            id: 52,
-            text: "Dashboard",
-            to: "/dashboard",
-            icon: <BsWindowSplit
-                size={20} />
-        },
-
-        {
             id: 2,
-            text: "Fill appraisal",
-            to: "/reports",
+            text: "Staff",
+            to: "/staff",
             icon: <BsPerson size={20} />
         },
+        {
+            id: 7,
+            text: "Analytics",
+            to: "/analytics",
+            icon: <BsGraphUpArrow size={20} />
+        },
+
+
 
         {
             id: 11,
@@ -280,28 +280,20 @@ const Sidebar = () => {
 
 
                 {
-                    SystemData?.data?.systemRole !== "USER" && user
-                        ?
-                        SideNavigations.map((role, i) => (
+                    SystemData?.data?.systemRole !== "USER" ?
+                        allStaffNavigations.map((role, i) => (
                             <Link key={i} className={`hover:bg-[#282828af] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-100 transition-all delay-74 my-5 flex items-center gap-3  ${pathname === role.to && "bg-[#282828] shadow-md border-white border"}`} href={`${role.to}`}>{role.icon}{role.text}</Link>
 
                         ))
                         :
-                        SystemData?.data?.systemRole ?
-                            <>
-                                {staffSideNavigation.map(e => (
-                                    <Link key={e.id} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 my-5 flex items-center gap-3' href={`${e.to}`}>{e.icon}{e.text}</Link>
-                                ))}
-                            </>
-                            :
-                            <>
+                        <>
 
-                                {staffSideNavigation.map(e => (
-                                    <Link key={e.id} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 my-5 flex items-center gap-3' href={`${e.to}`}>{e.icon}{e.text}</Link>
-                                ))}
+                            {staffSideNavigation.map(e => (
+                                <Link key={e.id} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 my-5 flex items-center gap-3' href={`${e.to}`}>{e.icon}{e.text}</Link>
+                            ))}
 
 
-                            </>
+                        </>
 
 
                 }

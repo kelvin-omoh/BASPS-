@@ -11,10 +11,13 @@ import ChartComponent from "./components/Chart";
 import StaffGeneralForm from "./components/(Home)/StaffGeneralForm";
 import { BsArrowRight, BsBook, BsClock, BsDownload, BsPeople } from "react-icons/bs";
 import bg from "./assets/bg.jpg"
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "./firebaseConfig";
 
 
 export default function Home() {
-  const { user, error, isLoading } = useUser();
+  const [user, loading, error] = useAuthState(auth); // Use useAuthState hook with your Firebase auth instance
+
   const navigate = useRouter();
 
 
@@ -117,7 +120,7 @@ export default function Home() {
                 <Button onClick={() => {
 
                   !user && alert("You need to login")
-                  navigate.push("/login")
+                  !user && navigate.push("/login")
                 }
                 } color="primary">
                   Continue here to fill the form

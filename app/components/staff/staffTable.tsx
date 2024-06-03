@@ -40,6 +40,7 @@ const columns = [
     { name: "ID", uid: "id", sortable: true },
     { name: "NAME", uid: "name", sortable: true },
 
+
     { name: "ROLE", uid: "role", sortable: true },
     { name: "TYPE", uid: "type" },
     { name: "COLLEGE", uid: "college" },
@@ -49,9 +50,9 @@ const columns = [
 ];
 
 const statusOptions = [
-    { name: "Active", uid: "active" },
-    { name: "Paused", uid: "paused" },
-    { name: "Vacation", uid: "vacation" },
+    { name: "ACADEMIC STAFF", uid: "ACADEMIC STAFF", sortable: true },
+    { name: "NON ACADEMIC JUNIOR STAFF", uid: "NON ACADEMIC JUNIOR STAFF", sortable: true },
+    { name: "NON ACADEMIC SENIOR STAFF", uid: "NON ACADEMIC SENIOR STAFF", sortable: true },
 ];
 
 
@@ -312,8 +313,8 @@ export default function App() {
                             id: key,
                             name: staff.name,
                             role: "lecturer",
-                            college: staff.college,
-                            department: staff.department,
+                            college: staff.college ? staff.college : "null",
+                            department: staff.department ? staff.department : "null",
                             type: "academic-staff",
                             email: staff.email
                         });
@@ -325,8 +326,8 @@ export default function App() {
                             id: key,
                             name: nonAcademicJuniorStaff.fullName,
                             role: "USER",
-                            college: nonAcademicJuniorStaff.collegeName,
-                            department: nonAcademicJuniorStaff.department,
+                            college: nonAcademicJuniorStaff.collegeName ? nonAcademicJuniorStaff.collegeName : " null",
+                            department: nonAcademicJuniorStaff.department ? nonAcademicJuniorStaff.department : "null",
                             type: "nonacademic-junior-staff",
                             email: nonAcademicJuniorStaff.emailAddress
                         });
@@ -338,8 +339,8 @@ export default function App() {
                             id: key,
                             name: nonAcademicSeniorStaff.fullName,
                             role: "USER",
-                            college: "",
-                            department: nonAcademicSeniorStaff.department,
+                            college: nonAcademicSeniorStaff.fullName ? nonAcademicSeniorStaff.fullName : "null",
+                            department: nonAcademicSeniorStaff.department ? nonAcademicSeniorStaff.department : "null",
                             type: "non-academic-senior-staff",
                             email: nonAcademicSeniorStaff.emailAddress
                         });
@@ -597,7 +598,7 @@ export default function App() {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
-                                disallowEmptySelection
+                                disallowEmptySelection={true}
                                 aria-label="Table Columns"
                                 closeOnSelect={false}
                                 selectedKeys={visibleColumns}

@@ -324,7 +324,7 @@ const StaffGeneralForm = () => {
             </form>
 
 
-            <Button isDisabled={checkForm ? true : false} className=" text-[16px] transition animate-bounce"
+            <Button isDisabled={staffRole.length === 0 ? true : false} className=" text-[16px] transition animate-bounce"
                 onClick={() => {
                     !checkForm ? onOpen() : alert("You have filled the form")
                 }

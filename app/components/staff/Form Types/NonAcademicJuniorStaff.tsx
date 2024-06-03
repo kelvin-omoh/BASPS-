@@ -7,7 +7,7 @@ import countryList from 'react-select-country-list';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { DB } from '@/app/firebaseConfig';
-import { push, ref } from 'firebase/database';
+import { get, push, ref } from 'firebase/database';
 
 const NonAcademicJuniorStaff: React.FC<any> = ({ buttonRef }) => {
     const { user, error, isLoading } = useUser();
@@ -59,19 +59,39 @@ const NonAcademicJuniorStaff: React.FC<any> = ({ buttonRef }) => {
 
 
 
-        let body = {
-            data:
-            {
-                ...NonAcademicJuniorStaffData, dateOfBirth: new Date(NonAcademicJuniorStaffData.dateOfBirth).toISOString().slice(0, 10), // Convert dateOfBirth to yyyy-MM-dd format
-                dateOfFirstAppointment: new Date(NonAcademicJuniorStaffData.dateOfFirstAppointment).toISOString().slice(0, 10), // Convert dateOfFirstAppointment to yyyy-MM-dd format
-                confirmationDate: new Date(NonAcademicJuniorStaffData.confirmationDate).toISOString().slice(0, 10), // Convert dateOfConfirmationAppointment to yyyy-MM-dd format
-
-            }
-        }
-
-        console.log(JSON.stringify(body));
         try {
+
             e.preventDefault();
+
+            const email = NonAcademicJuniorStaffData.emailAddress; // Get the email from the form data
+            const locations = ['baps/nonacademic-junior-staff/', 'baps/academicstaff/', 'baps/nonacademic-senior-staff/'];
+
+            for (const location of locations) {
+                const userRef = ref(DB, location);
+                const snapshot = await get(userRef);
+                const users = snapshot.val();
+
+                for (const key in users) {
+                    if (users[key].data.email === email) {
+                        // If the email already exists, show a message and return
+                        toast.error('Email already exists in the database');
+                        return;
+                    }
+                }
+            }
+
+
+            let body = {
+                data:
+                {
+                    ...NonAcademicJuniorStaffData, dateOfBirth: new Date(NonAcademicJuniorStaffData.dateOfBirth).toISOString().slice(0, 10), // Convert dateOfBirth to yyyy-MM-dd format
+                    dateOfFirstAppointment: new Date(NonAcademicJuniorStaffData.dateOfFirstAppointment).toISOString().slice(0, 10), // Convert dateOfFirstAppointment to yyyy-MM-dd format
+                    confirmationDate: new Date(NonAcademicJuniorStaffData.confirmationDate).toISOString().slice(0, 10), // Convert dateOfConfirmationAppointment to yyyy-MM-dd format
+
+                }
+            }
+
+            console.log(JSON.stringify(body));
 
 
             const userRef = ref(DB, 'baps/nonacademic-junior-staff/');
@@ -291,7 +311,7 @@ const NonAcademicJuniorStaff: React.FC<any> = ({ buttonRef }) => {
                 </div>
             </div>
 
-            <button onClick={(e: any) => handleSubmit(e)} ref={buttonRef} className=' hidden' type="submit">Submit</button>
+            <button ref={buttonRef} className=' hidden' type="submit">Submit</button>
         </form>
     );
 }

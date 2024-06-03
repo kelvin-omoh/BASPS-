@@ -8,11 +8,12 @@ import { BsArrowRight, BsBook, BsClock, BsDownload, BsPeople } from "react-icons
 import { useRouter } from 'next/navigation';
 import { Select, SelectItem } from "@nextui-org/react";
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../firebaseConfig';
+import { DB, auth } from '../firebaseConfig';
 import { useStaffStore } from '../Store/Store';
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import axios from 'axios';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { ref, set, get, child, update } from 'firebase/database';
 
 interface Istaff {
     value: string;
@@ -23,10 +24,11 @@ const Page = () => {
     const router = useRouter();
     const [user] = useAuthState(auth);
     const [staffRole, setStaffRole] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false);
     const addUserRole = useStaffStore((state: any) => state.addUserRole);
     const UserInStore = useStaffStore((state: any) => state.user);
 
-  
+
 
     const mainfeatures = [
         {
@@ -108,12 +110,30 @@ const Page = () => {
     const signInWithGoogle = async () => {
         const provider = new GoogleAuthProvider();
         try {
-            await signInWithPopup(auth, provider);
+            const result = await signInWithPopup(auth, provider)
 
-        } catch (error) {
-            console.error("Error during sign-in:", error);
+
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            if (!credential) {
+                console.error("Error in user Credential")
+                return
+            }
+            const token = credential.accessToken;
+            const user = result.user;
+            console.log(user, token)
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            const email = error.customData.email;
+            const credential = GoogleAuthProvider.credentialFromError(error);
+
         }
     };
+
+
 
     useEffect(() => {
         if (user?.email) {
@@ -121,18 +141,78 @@ const Page = () => {
         }
     }, [user]);
 
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [role, setRole] = useState('');
+
+
+    const adminLogin = async () => {
+        try {
+            // Check if the user is signed in
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // Reference to the admin path
+            const adminRef = ref(DB, 'baps/admin/');
+            const adminSnapshot = await get(adminRef);
+
+            // Check if the email is in the specified path
+            if (adminSnapshot.exists() && adminSnapshot.val().email === email) {
+                alert("Successfully signed in as admin");
+            } else {
+                // If the user is signed in but not an admin, add them as an admin
+                await update(adminRef, { email, role: 'ADMIN' });
+                alert("Successfully signed in and added as admin");
+            }
+
+        } catch (error) {
+            console.error('Error logging in user', error);
+        }
+    };
+
+
+
     return (
         <div className='w-full h-screen grid grid-cols-2'>
             <div className='p-[4rem] rounded-lg text-center flex flex-col justify-center items-center'>
                 <Image src={logo} alt={'logo'} className='w-[4rem]' />
-                <h1 className='font-semibold'>Welcome To BAPS</h1>
+                <h1 className='font-semibold'>Welcome To BAPS </h1>
 
                 {/* FORM */}
                 <form onSubmit={(e) => e.preventDefault()} className='flex flex-col gap-3 mt-11 w-[70%]'>
-                    <button onClick={signInWithGoogle} className='my-8 text-white bg-black rounded-lg p-3'>
-                        Continue to login In
+                    {isAdmin ?
+                        <>
+                            <label className=' flex flex-col text-start gap-3 ' htmlFor="">
+                                Email:
+                                <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" className=' w-full border border-[2px] p-3  rounded-md' name="" id="" />
+                            </label>
+                            <label className=' flex flex-col text-start gap-3 ' htmlFor="">
+                                Password:
+                                <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" className=' w-full border border-[2px] p-3  rounded-md' name="" id="" />
+                            </label>
+                        </>
+                        : null
+
+
+                    }
+                    <button onClick={() => {
+                        isAdmin ?
+
+                            adminLogin() :
+                            signInWithGoogle()
+
+                    }} className='my-8 text-white bg-black rounded-lg p-3'>
+                        {isAdmin ? 'login ' : 'Continue to login In'}
                     </button>
-                    <p>sign-in here as an Adminstrator? <Link href={'/'} className='underline font-semibold text-blue-700'>Admin only</Link></p>
+                    {!isAdmin ? <p> sign-in here as an Adminstrator? <Link href={'/login'} onClick={() => {
+                        setIsAdmin(true)
+                        addUserRole('ADMIN')
+                    }} className='underline font-semibold text-blue-700'>Admin only</Link></p> :
+                        <p> sign-in here as an staff? <Link href={'/login'} onClick={() => {
+                            setIsAdmin(false)
+                            addUserRole('USER')
+                        }} className='underline font-semibold text-blue-700'>staff only</Link></p>}
+
                 </form>
             </div>
             <div

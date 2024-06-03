@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import CountryList from '../../CountryList';
 import countryList from 'react-select-country-list';
 import { DB } from '@/app/firebaseConfig';
-import { push, ref } from 'firebase/database';
+import { get, push, ref } from 'firebase/database';
 
 
 const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
@@ -71,32 +71,55 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
 
 
     const handleSubmit = async (e: any) => {
-        let body = {
-            data:
-            {
-                ...NonAcademicSeniorStaffData, dateOfBirth: new Date(NonAcademicSeniorStaffData.dateOfBirth).toISOString().slice(0, 10), // Convert dateOfBirth to yyyy-MM-dd format
-                dateOfFirstAppointment: new Date(NonAcademicSeniorStaffData.dateOfFirstAppointment).toISOString().slice(0, 10), // Convert dateOfFirstAppointment to yyyy-MM-dd format
-                confirmationDate: new Date(NonAcademicSeniorStaffData.confirmationDate).toISOString().slice(0, 10), // Convert dateOfConfirmationAppointment to yyyy-MM-dd format
 
-            }
-        }
+        const email = NonAcademicSeniorStaffData.emailAddress; // Get the email from the form data
 
-        console.log(JSON.stringify(body));
         try {
             e.preventDefault();
+
+
+            // Check if the email already exists in the database in each location
+            const locations = ['baps/nonacademic-junior-staff/', 'baps/academicstaff/', 'baps/nonacademic-senior-staff/'];
+
+            for (const location of locations) {
+                const userRef = ref(DB, location);
+                const snapshot = await get(userRef);
+                const users = snapshot.val();
+
+                for (const key in users) {
+                    if (users[key].data.email === email) {
+                        // If the email already exists, show a message and return
+                        toast.error('Email already exists in the database');
+                        return;
+                    }
+                }
+            }
+
+            let body = {
+                data: {
+                    ...NonAcademicSeniorStaffData,
+                    dateOfBirth: new Date(NonAcademicSeniorStaffData.dateOfBirth).toISOString().slice(0, 10), // Convert dateOfBirth to yyyy-MM-dd format
+                    dateOfFirstAppointment: new Date(NonAcademicSeniorStaffData.dateOfFirstAppointment).toISOString().slice(0, 10), // Convert dateOfFirstAppointment to yyyy-MM-dd format
+                    confirmationDate: new Date(NonAcademicSeniorStaffData.confirmationDate).toISOString().slice(0, 10), // Convert dateOfConfirmationAppointment to yyyy-MM-dd format
+                }
+            };
+
+            console.log(JSON.stringify(body));
+
+
+            // If the email doesn't exist, proceed with form submission
             const userRef = ref(DB, 'baps/nonacademic-senior-staff/');
             const res: any = push(userRef, body);
             console.log(res?.data);
-            toast.success('Successfully filled !!!!')
-
+            toast.success('Successfully filled !!!!');
         } catch (error: any) {
-            // toast.error('An error occured ,Try again!', error?.response?.data?.error?.message)
+            // Show error message
             toast.error('Try again !!, email already taken', error?.response?.data?.error?.message);
 
-            console.log(error);
+            console.error("Error submitting form:", error);
         }
+    };
 
-    }
 
     return (
         <form onSubmit={(e) => {
@@ -125,7 +148,7 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
                                 value={NonAcademicSeniorStaffData.telephoneNumbers} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
                         </label>
                         <label className='flex flex-col' htmlFor="">EMAIL ADDRESS:
-                            <input required type="text" name='emailAddress' className='border bg-slate-50 rounded-lg p-3'
+                            <input required type="email" name='emailAddress' className='border bg-slate-50 rounded-lg p-3'
                                 value={NonAcademicSeniorStaffData.emailAddress} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
                         </label>
                         <label className='flex flex-col' htmlFor="">DATE AND PLACE OF BIRTH:
@@ -317,7 +340,7 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
                 </div>
             </div>
 
-            <button onClick={(e: any) => handleSubmit(e)} ref={buttonRef} className=' hidden' type="submit">Submit</button>
+            <button ref={buttonRef} className=' hidden' type="submit">Submit</button>
         </form>
     );
 };
