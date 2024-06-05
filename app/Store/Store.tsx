@@ -49,6 +49,9 @@ export const useStaffStore = create(
                 setProfile: (newProfile: any) => set({ profile: newProfile }),
 
 
+                isAdmin: false,
+                setIsAdmin: (newIsAdmin: any) => set({ isAdmin: newIsAdmin })
+
             }), { name: 'staffStore' },
         ),
     ),

@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 
 import { get, push, ref, set } from "firebase/database";
 import { DB } from '../../../firebaseConfig'
-
+import { CircularProgress } from "@nextui-org/progress";
 
 const AcademicStaff: React.FC<any> = ({ buttonRef }) => {
     const { user, error, isLoading } = useUser();
@@ -85,6 +85,7 @@ const AcademicStaff: React.FC<any> = ({ buttonRef }) => {
                 const userRef = ref(DB, location);
                 const snapshot = await get(userRef);
                 const users = snapshot.val();
+                console.log(users);
 
                 for (const key in users) {
                     if (users[key].data.email === email) {
@@ -190,10 +191,12 @@ const AcademicStaff: React.FC<any> = ({ buttonRef }) => {
     return (
         <form onSubmit={(e) => {
             e.preventDefault()
+
             // handleStoreFormData()
             handleSubmit(e)
         }}
             className='w-full pb-[4rem]'>
+
             <h1 className='text-[18px] font-semibold'>Personal Data {process.env.STRAPI_TOKEN}</h1>
             <div className='grid grid-cols-2 my-5 w-full justify-between gap-4'>
                 {/* LEFT */}

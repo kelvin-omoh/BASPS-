@@ -24,9 +24,11 @@ const Page = () => {
     const router = useRouter();
     const [user] = useAuthState(auth);
     const [staffRole, setStaffRole] = useState('');
-    const [isAdmin, setIsAdmin] = useState(false);
+
     const addUserRole = useStaffStore((state: any) => state.addUserRole);
+    const isAdmins = useStaffStore((state: any) => state.isAdmin);
     const UserInStore = useStaffStore((state: any) => state.user);
+    const { isAdmin, setIsAdmin } = useStaffStore((state: any) => state);
 
 
 
@@ -159,6 +161,7 @@ const Page = () => {
             // Check if the email is in the specified path
             if (adminSnapshot.exists() && adminSnapshot.val().email === email) {
                 alert("Successfully signed in as admin");
+                router.push("/")
             } else {
                 // If the user is signed in but not an admin, add them as an admin
                 await update(adminRef, { email, role: 'ADMIN' });
@@ -195,6 +198,7 @@ const Page = () => {
 
 
                     }
+
                     <button onClick={() => {
                         isAdmin ?
 
@@ -204,7 +208,7 @@ const Page = () => {
                     }} className='my-8 text-white bg-black rounded-lg p-3'>
                         {isAdmin ? 'login ' : 'Continue to login In'}
                     </button>
-                    {!isAdmin ? <p> sign-in here as an Adminstrator? <Link href={'/login'} onClick={() => {
+                    {!isAdmin ? <p> sign-in here as an Adminstrator?  <Link href={'/login'} onClick={() => {
                         setIsAdmin(true)
                         addUserRole('ADMIN')
                     }} className='underline font-semibold text-blue-700'>Admin only</Link></p> :

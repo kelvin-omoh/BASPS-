@@ -68,54 +68,57 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
     }
 
 
-
-
     const handleSubmit = async (e: any) => {
-
         const email = NonAcademicSeniorStaffData.emailAddress; // Get the email from the form data
 
         try {
             e.preventDefault();
 
-
             // Check if the email already exists in the database in each location
             const locations = ['baps/nonacademic-junior-staff/', 'baps/academicstaff/', 'baps/nonacademic-senior-staff/'];
+            let emailExists = false;
 
             for (const location of locations) {
                 const userRef = ref(DB, location);
                 const snapshot = await get(userRef);
                 const users = snapshot.val();
+                console.log(users);
+
 
                 for (const key in users) {
-                    if (users[key].data.email === email) {
-                        // If the email already exists, show a message and return
-                        toast.error('Email already exists in the database');
-                        return;
+                    if (users[key].data.emailAddress === email) {
+                        emailExists = true;
+                        break;
                     }
                 }
+
+                if (emailExists) break;
             }
 
-            let body = {
-                data: {
-                    ...NonAcademicSeniorStaffData,
-                    dateOfBirth: new Date(NonAcademicSeniorStaffData.dateOfBirth).toISOString().slice(0, 10), // Convert dateOfBirth to yyyy-MM-dd format
-                    dateOfFirstAppointment: new Date(NonAcademicSeniorStaffData.dateOfFirstAppointment).toISOString().slice(0, 10), // Convert dateOfFirstAppointment to yyyy-MM-dd format
-                    confirmationDate: new Date(NonAcademicSeniorStaffData.confirmationDate).toISOString().slice(0, 10), // Convert dateOfConfirmationAppointment to yyyy-MM-dd format
-                }
-            };
+            if (emailExists) {
+                // If the email already exists, show a message and return
+                toast.error('Email already exists in the database');
+            } else {
+                let body = {
+                    data: {
+                        ...NonAcademicSeniorStaffData,
+                        dateOfBirth: new Date(NonAcademicSeniorStaffData.dateOfBirth).toISOString().slice(0, 10), // Convert dateOfBirth to yyyy-MM-dd format
+                        dateOfFirstAppointment: new Date(NonAcademicSeniorStaffData.dateOfFirstAppointment).toISOString().slice(0, 10), // Convert dateOfFirstAppointment to yyyy-MM-dd format
+                        confirmationDate: new Date(NonAcademicSeniorStaffData.confirmationDate).toISOString().slice(0, 10), // Convert dateOfConfirmationAppointment to yyyy-MM-dd format
+                    }
+                };
 
-            console.log(JSON.stringify(body));
+                console.log(JSON.stringify(body));
 
-
-            // If the email doesn't exist, proceed with form submission
-            const userRef = ref(DB, 'baps/nonacademic-senior-staff/');
-            const res: any = push(userRef, body);
-            console.log(res?.data);
-            toast.success('Successfully filled !!!!');
+                // If the email doesn't exist, proceed with form submission
+                const userRef = ref(DB, 'baps/nonacademic-senior-staff/');
+                const res: any = push(userRef, body);
+                console.log(res?.data);
+                toast.success('Successfully filled !!!!');
+            }
         } catch (error: any) {
             // Show error message
             toast.error('Try again !!, email already taken', error?.response?.data?.error?.message);
-
             console.error("Error submitting form:", error);
         }
     };

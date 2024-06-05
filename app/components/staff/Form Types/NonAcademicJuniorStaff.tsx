@@ -70,10 +70,14 @@ const NonAcademicJuniorStaff: React.FC<any> = ({ buttonRef }) => {
                 const userRef = ref(DB, location);
                 const snapshot = await get(userRef);
                 const users = snapshot.val();
+                console.log(users);
+
 
                 for (const key in users) {
-                    if (users[key].data.email === email) {
+                    if (users[key].data.emailAddress === email) {
                         // If the email already exists, show a message and return
+                        console.log(users[key].emailAddress === email);
+
                         toast.error('Email already exists in the database');
                         return;
                     }

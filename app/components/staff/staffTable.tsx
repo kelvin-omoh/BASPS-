@@ -32,7 +32,10 @@ import ReviewModal from "./Modals/ReviewModal";
 import { useStaffStore } from "@/app/Store/Store";
 import { app } from "@/app/firebaseConfig";
 import SingleUserView from "./Modals/SingleUserView";
-
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import Link from "next/link";
 
 
 
@@ -297,6 +300,9 @@ export default function App() {
 
     const AllUsers: any = []
 
+    const [viewSingleUser, setViewSingleUser] = useState<boolean>(false)
+    const [SingleUser, setSingleUser] = useState<any>(null)
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -374,6 +380,28 @@ export default function App() {
 
                 const staffRef = ref(db, "/baps/academicstaff/" + user?.id)
                 remove(staffRef)
+                toast.success(user.name + ' has been successfully deleted ')
+
+            }
+
+            if (user.type === 'nonacademic-junior-staff') {
+
+                console.log(
+                    ref(db, "/baps/nonacademic-junior-staff/" + user?.id))
+
+                const staffRef = ref(db, "/baps/nonacademic-junior-staff/" + user?.id)
+                remove(staffRef)
+                toast.success(user.name + ' has been successfully deleted ')
+
+            }
+            if (user.type === 'non-academic-senior-staff') {
+
+                console.log(
+                    ref(db, "/baps/nonacademic-senior-staff/" + user?.id))
+
+                const staffRef = ref(db, "/baps/nonacademic-senior-staff/" + user?.id)
+                remove(staffRef)
+                toast.success(user.name + ' has been successfully deleted ')
 
             }
             console.log(user);
@@ -462,7 +490,7 @@ export default function App() {
                 );
             case "actions":
                 return (
-                    <div className="relative flex justify-end items-center gap-2">
+                    <div className="relative  flex justify-end items-center gap-2">
 
                         <Dropdown>
                             <DropdownTrigger>
@@ -471,31 +499,20 @@ export default function App() {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                {/* <DropdownItem>
-                                    <Button
-                                        className=" w-full"
-                                        onPress={() => {
-                                            onOpen()
-                                            // handleViewClick(user)
 
-                                            appraiseNewStaff(true)
-
-                                        }}
-                                    >Appraise
-                                    </Button>
-
-                                </DropdownItem> */}
                                 <DropdownItem>
                                     <Button
                                         className=" w-full"
-                                        onPress={() => {
-                                            onOpen()
-                                            setViewUser(user)
-                                            handleViewClick(user)
-                                        }}
+                                        onClick={() => {
+                                            setSingleUser(user)
+                                            setViewSingleUser(true)
+                                        }
+                                        }
+
                                     >
                                         View
                                     </Button>
+
 
                                 </DropdownItem>
 
@@ -677,12 +694,49 @@ export default function App() {
 
     return (
         <>
-            <SingleUserView user={viewUser} />
+            {viewSingleUser && <div className=" bg-gray-700/75 w-[100%] left-0 z-[100] h-full absolute">
+                <div className=" w-full grid h-full place-content-center text-white text-[18px] ">
+                    <button onClick={() => setViewSingleUser(!viewSingleUser)} className=" absolute top-8 right-8 bg-white rounded-full m-auto size-10 text-black text-[2.2em] ">x</button>
+                    <div className=" flex flex-col gap-8">
+                        <p>
+                            <span className=' font-semibold'> ID:</span>
+                            {SingleUser?.id}
+                        </p>
+                        <p>
+                            <span className=' font-semibold'>  Name:</span>
+                            {SingleUser?.name}
+                        </p>
+                        <p>
+                            <span className=' font-semibold'>Email:</span>
+                            {SingleUser?.email}
+                        </p>
+                        <p>
+                            <span className=' font-semibold'> Role:</span>
+                            {SingleUser?.role}
+                        </p>
+
+                        <p>
+                            <span className=' font-semibold'>College:</span> {SingleUser?.college}
+                        </p>
+
+
+                        <p>
+                            <span className=' font-semibold'>Department:</span>{SingleUser?.department}
+                        </p>
+                        <p>
+                            <span className=' font-semibold'>Staff Type:</span> {SingleUser?.type}
+                        </p>
+
+                    </div>
+                </div>
+
+            </div>}
             <Table
                 aria-label="Example table with custom cells, pagination and sorting"
                 isHeaderSticky
                 bottomContent={bottomContent}
                 bottomContentPlacement="outside"
+                className=" pt-[3rem] "
                 classNames={{
                     wrapper: "max-h-[382px]",
                 }}
@@ -704,9 +758,13 @@ export default function App() {
                             {column.name}
                         </TableColumn>
                     )}
+
                 </TableHeader>
+
                 <TableBody emptyContent={"No users found"} items={sortedItems}>
                     {(item) => (
+
+
 
                         <TableRow key={item.id}>
 

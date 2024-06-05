@@ -18,13 +18,13 @@ export default function StaffForm() {
 
     return (
         <>
-            <div className="flex justify-end flex-wrap w-full gap-3">
-
+            <div className="flex justify-end mt-[2rem] flex-wrap w-full gap-3">
+                {/* 
                 {sizes.map((size) => (
                     <Button key={size} color="primary" className=" w-fit flex my-6   justify-end" onPress={() => handleOpen(size)}>
                         <BsPersonPlus size={20} />
                         Add New staff</Button>
-                ))}
+                ))} */}
             </div>
             <Modal
                 className=" mt-12"
