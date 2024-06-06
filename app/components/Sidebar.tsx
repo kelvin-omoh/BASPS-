@@ -266,7 +266,6 @@ const Sidebar = () => {
 
 
             <ul className=' shadow-md '>
-                {console.log(isAdmin)}
 
 
                 {

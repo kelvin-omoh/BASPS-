@@ -11,6 +11,7 @@ import { auth } from '../firebaseConfig';
 const Header = () => {
 
     const [user, loading, error] = useAuthState(auth); // Use useAuthState hook with your Firebase auth instance
+    const { isAdmin, setIsAdmin } = useStaffStore((state: any) => state);
 
 
     const systemData = useStaffStore((state: any) => state.systemData)
@@ -33,15 +34,17 @@ const Header = () => {
 
 
             <div className='text-[#707070]'>
-                <h1 className={` text-[24px] text-black ${systemData?.data?.systemRole !== "USER" && 'hidden'}`}>Hello, <span className=' capitalize'>
 
-
-                    {user?.displayName ? user?.displayName : "Guest"} </span></h1>
 
                 {
-                    systemData?.data?.systemRole !== "USER" &&
-                    <h1 className=' text-[24px] text-black'>Hello, <span className=' capitalize'>
-                        ADMINSTRATOR </span></h1>
+                    isAdmin ?
+                        <h1 className=' text-[24px] text-black'>Hello, <span className=' capitalize'>
+                            ADMINSTRATOR </span></h1>
+                        : <h1 className={` text-[24px] text-black ${systemData?.data?.systemRole !== "USER" && 'hidden'}`}>Hello, <span className=' capitalize'>
+
+
+                            {user?.displayName ? user?.displayName : "Guest"} </span></h1>
+
                 }
                 <p>Welcome Back </p>
             </div>
