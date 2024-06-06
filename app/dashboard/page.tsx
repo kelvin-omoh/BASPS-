@@ -1,6 +1,6 @@
 "use client"
 import Image from 'next/image'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import logo from "../assets/logo.png"
 import bg from "../assets/bg.jpg"
 import Link from 'next/link'
@@ -42,6 +42,7 @@ import { FaUser } from 'react-icons/fa'
 import { useRouter } from 'next/navigation'
 import { auth } from '../firebaseConfig'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import { getDatabase, onValue, ref } from 'firebase/database'
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -115,12 +116,43 @@ const Page = () => {
 
     const { profile, setProfile } = useStaffStore((state: any) => state);
     const [user] = useAuthState(auth);
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+    const [newUserData, setNewUserData] = useState({
+        name: `${user?.displayName ? user.displayName : ''}`,
+        email: `${user?.email ? user.email : ''}`,
+        staffId: '',
+        staffType: '',
+        position: '',
+        phoneNumber: `${user?.phoneNumber ? user.phoneNumber : ''}`,
+        location: '',
+        profileImage: `${user?.photoURL ? user.photoURL : ''}`,
+        college: '',
+        department: '',
+        phone: `${user?.phoneNumber ? user.phoneNumber : ''}`,
+        presentPosition: '',
+        dateOfFirstAppointment: '',
+        dateOfConfirmationAppointment: '',
+    })
     const router = useRouter()
     useEffect(() => {
         if (!user) {
             router.push("/login"); // Redirect to dashboard if user is logged in
         }
     }, [!user]);
+
+    useEffect(() => {
+
+        const db = getDatabase();
+        const starCountRef = ref(db, `baps/profiles/${user?.email?.replace('.', '-')}`);
+        onValue(starCountRef, (snapshot) => {
+            const data = snapshot.val();
+            console.log(data);
+            setNewUserData(data)
+
+        });
+        setIsDataLoaded(true);
+    }, [user]);
 
     const performanceColumns = [
         {
@@ -139,15 +171,15 @@ const Page = () => {
     const School_Profile = [
         {
             key: "college",
-            label: `college : ${profile.college || ''}`,
+            label: `college : ${newUserData.college || ''}`,
         },
         {
             key: "department",
-            label: `department : ${profile.department || ''}`,
+            label: `department : ${newUserData.department || ''}`,
         },
         {
             key: "telephone",
-            label: `telephone : ${profile.phone || ''}`,
+            label: `telephone : ${newUserData.phoneNumber || ''}`,
         },
         {
             key: "email",
@@ -155,15 +187,15 @@ const Page = () => {
         },
         {
             key: "presentPosition",
-            label: `presentPosition : ${profile.presentPosition || ''}`,
+            label: `presentPosition : ${newUserData.presentPosition || ''}`,
         },
         {
             key: "dateOfFirstAppointment",
-            label: `date Of First Appointment: ${profile.dateOfFirstAppointment || ''}`,
+            label: `date Of First Appointment: ${newUserData.dateOfFirstAppointment || ''}`,
         },
         {
             key: "dateOfConfirmationAppointment",
-            label: `date Of Confirmation Appointment : ${profile.dateOfConfirmationAppointment || ''}`,
+            label: `date Of Confirmation Appointment : ${newUserData.dateOfConfirmationAppointment || ''}`,
         },
     ];
 

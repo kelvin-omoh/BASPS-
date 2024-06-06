@@ -9,7 +9,7 @@ import { DB } from '../firebaseConfig';
 import { BsPeople } from 'react-icons/bs';
 Chart.register(CategoryScale);
 
-const page = () => {
+const Page = () => {
 
     const [chartData, setChartData] = useState<any>({ labels: [], datasets: [] });
     const [academicStaffCount, setAcademicStaffCount] = useState<number>(0);
@@ -120,13 +120,13 @@ const page = () => {
                 </div>
                 <div className='flex flex-col gap-3 justify-center items-center text-white bg-blue-800 p-4 rounded-lg h-[10rem] w-[18rem]'>
                     <div className='flex gap-3 justify-between p-2 w-full items-center'>
-                        <h1 className='text-[18px]'>Non Academic Junior Staff</h1><AiOutlineUser size={30} />
+                        <h1 className='text-[18px]'>Non Academic Junior Staff</h1><BsPeople size={30} />
                     </div>
                     <p>{nonAcademicJuniorStaffCount}</p>
                 </div>
                 <div className='flex flex-col gap-3 justify-center items-center text-white bg-blue-800 p-4 rounded-lg h-[10rem] w-[18rem]'>
                     <div className='flex gap-3 justify-between p-2 w-full items-center'>
-                        <h1 className='text-[18px]'>Academic Staff</h1><AiOutlineUser size={30} />
+                        <h1 className='text-[18px]'>Academic Staff</h1><BsPeople size={30} />
                     </div>
                     <p>{academicStaffCount}</p>
                 </div>
@@ -162,4 +162,4 @@ const page = () => {
     );
 }
 
-export default page;
+export default Page;

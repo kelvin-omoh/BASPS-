@@ -84,6 +84,12 @@ const Sidebar = () => {
             icon: <BsWindowSplit
                 size={20} />
         },
+        {
+            id: 21,
+            text: "Staff",
+            to: "/staff",
+            icon: <BsPerson size={20} />
+        },
 
         {
             id: 11,
@@ -98,7 +104,52 @@ const Sidebar = () => {
                     user?.email ?
                         <button className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 w-full flex items-center gap-3'
                             onClick={() => {
+                                auth.signOut()
+                            }}
+                        >
+                            <FaSignOutAlt size={20} /> Sign out
+                        </button> :
 
+
+                        <button className=' hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74  flex items-center  gap-3'>
+                            <FaSignInAlt size={20} />   Login
+                        </button>
+                }
+
+
+            </nav>
+        },
+    ]
+    const noUserNavigation = [
+        {
+            id: 1,
+            text: "Home",
+            to: "/",
+            icon: <BsHouse
+                size={20} />
+        },
+
+        {
+            id: 21,
+            text: "Staff",
+            to: "/staff",
+            icon: <BsPerson size={20} />
+        },
+
+        {
+            id: 11,
+            text: "",
+            to: !user?.email ? "/login" : "/",
+            icon: <nav className=' flex'>
+
+                {user?.email && <Image width={200} height={200} src={user.photoURL || ''} alt="" className="w-6 h-6" />}
+
+                {
+
+                    user?.email ?
+                        <button className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 w-full flex items-center gap-3'
+                            onClick={() => {
+                                auth.signOut()
                             }}
                         >
                             <FaSignOutAlt size={20} /> Sign out
@@ -161,78 +212,78 @@ const Sidebar = () => {
 
 
 
-    const SideNavigations = [
-        {
-            id: 1,
-            text: "Dashboard",
-            to: "/dashboard",
-            icon: <BsWindowSplit
-                size={20} />
-        },
-        {
-            id: 2,
-            text: "Staff",
-            to: "/staff",
-            icon: <BsPerson size={20} />
-        },
-        {
-            id: 3,
-            text: "Performance",
-            to: "/performance",
-            icon: <BsPersonFillSlash size={20} />
-        },
-        {
-            id: 4,
-            text: "Recruitments",
-            to: "/recruitments",
-            icon: <AiOutlineUsergroupAdd size={20} />
-        },
-        {
-            id: 5,
-            text: "Organization",
-            to: "/organization",
-            icon: <BsBarChartSteps size={20}
-            />
-        },
-        {
-            id: 7,
-            text: "Analvtics",
-            to: "/analvtics",
-            icon: <BsGraphUpArrow size={20}
-            />
-        },
+    // const SideNavigations = [
+    //     {
+    //         id: 1,
+    //         text: "Dashboard",
+    //         to: "/dashboard",
+    //         icon: <BsWindowSplit
+    //             size={20} />
+    //     },
+    //     {
+    //         id: 2,
+    //         text: "Staff",
+    //         to: "/staff",
+    //         icon: <BsPerson size={20} />
+    //     },
+    //     {
+    //         id: 3,
+    //         text: "Performance",
+    //         to: "/performance",
+    //         icon: <BsPersonFillSlash size={20} />
+    //     },
+    //     {
+    //         id: 4,
+    //         text: "Recruitments",
+    //         to: "/recruitments",
+    //         icon: <AiOutlineUsergroupAdd size={20} />
+    //     },
+    //     {
+    //         id: 5,
+    //         text: "Organization",
+    //         to: "/organization",
+    //         icon: <BsBarChartSteps size={20}
+    //         />
+    //     },
+    //     {
+    //         id: 7,
+    //         text: "Analvtics",
+    //         to: "/analvtics",
+    //         icon: <BsGraphUpArrow size={20}
+    //         />
+    //     },
 
-        {
-            id: 9,
-            text: "Reports",
-            to: "/reports",
-            icon: <BsBookHalf size={20} />
-        },
-        {
-            id: 10,
-            text: "Dark Mode",
-            to: "#",
-            icon: <BsSunFill size={20} />
-        },
+    //     {
+    //         id: 9,
+    //         text: "Reports",
+    //         to: "/reports",
+    //         icon: <BsBookHalf size={20} />
+    //     },
+    //     {
+    //         id: 10,
+    //         text: "Dark Mode",
+    //         to: "#",
+    //         icon: <BsSunFill size={20} />
+    //     },
 
-        {
-            id: 11,
-            text: "",
-            to: user ? "/logout" : "/login",
-            icon: <nav className=' flex'>
-                {user && <Image width={200} height={200} src={user.photoURL || ''} alt="" className="w-6 h-6" />}
-                {user ? (
-                    <button className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 w-full flex items-center gap-3' onClick={handleLogout}>
-                        <FaSignOutAlt size={20} /> Sign out
-                    </button>
-                ) : (
-                    <button onClick={handleLogin} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 flex items-center gap-3'>
-                        <FaSignInAlt size={20} /> Login
-                    </button>
-                )}
-            </nav>
-        },
-    ];
+    //     {
+    //         id: 11,
+    //         text: "",
+    //         to: user ? "/logout" : "/login",
+    //         icon: <nav className=' flex'>
+    //             {user && <Image width={200} height={200} src={user.photoURL || ''} alt="" className="w-6 h-6" />}
+    //             {user ? (
+    //                 <button className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 w-full flex items-center gap-3' onClick={handleLogout}>
+    //                     <FaSignOutAlt size={20} /> Sign out
+    //                 </button>
+    //             ) : (
+    //                 <button onClick={handleLogin} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 flex items-center gap-3'>
+    //                     <FaSignInAlt size={20} /> Login
+    //                 </button>
+    //             )}
+    //         </nav>
+    //     },
+    // ];
 
 
 
@@ -267,25 +318,34 @@ const Sidebar = () => {
 
             <ul className=' shadow-md '>
 
+                {user ?
+                    <>{
+                        !isAdmin ?
+                            allStaffNavigations.map((role, i) => (
+                                <Link key={i} className={`hover:bg-[#282828af] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-100 transition-all delay-74 my-5 flex items-center gap-3  ${pathname === role.to && "bg-[#282828] shadow-md border-white border"}`} href={`${role.to}`}>{role.icon}{role.text}</Link>
 
-                {
-                    !isAdmin ?
-                        allStaffNavigations.map((role, i) => (
-                            <Link key={i} className={`hover:bg-[#282828af] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-100 transition-all delay-74 my-5 flex items-center gap-3  ${pathname === role.to && "bg-[#282828] shadow-md border-white border"}`} href={`${role.to}`}>{role.icon}{role.text}</Link>
+                            ))
+                            :
+                            <>
 
-                        ))
-                        :
-                        <>
-
-                            {staffSideNavigation.map(e => (
-                                <Link key={e.id} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 my-5 flex items-center gap-3' href={`${e.to}`}>{e.icon}{e.text}</Link>
-                            ))}
-
-
-                        </>
+                                {staffSideNavigation.map(e => (
+                                    <Link key={e.id} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 my-5 flex items-center gap-3' href={`${e.to}`}>{e.icon}{e.text}</Link>
+                                ))}
 
 
+                            </>
+
+
+                    }
+                    </>
+                    :
+                    <>
+                        {noUserNavigation.map(e => (
+                            <Link key={e.id} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 my-5 flex items-center gap-3' href={`${e.to}`}>{e.icon}{e.text}</Link>
+                        ))}
+                    </>
                 }
+
 
 
                 {/* for admins only  */}
