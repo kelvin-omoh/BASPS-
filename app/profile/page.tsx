@@ -8,6 +8,7 @@ import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage
 import { DB, auth, storage } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useStaffStore } from '../Store/Store';
+import Image from 'next/image';
 
 interface FormData {
     name: string;
@@ -134,7 +135,7 @@ const Page: React.FC = () => {
                 <div className='w-full'>
                     <div className='mx-auto mb-[4rem] rounded-lg w-[4rem] relative'>
                         {user?.photoURL ? (
-                            <img src={user?.photoURL} alt="Profile" className="rounded-full w-16 h-16 object-cover cursor-pointer" onClick={handleImageClick} />
+                            <Image width={1000} height={1000} src={user?.photoURL} alt="Profile" className="rounded-full w-16 h-16 object-cover cursor-pointer" onClick={handleImageClick} />
                         ) : (
                             <FaUserCircle size={70} className="cursor-pointer" onClick={handleImageClick} />
                         )}

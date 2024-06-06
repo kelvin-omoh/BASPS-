@@ -124,7 +124,7 @@ const Page = () => {
             const user = result.user;
             console.log(user, token)
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         } catch (error: any) {
 
             const errorCode = error.code;
