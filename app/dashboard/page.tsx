@@ -171,15 +171,15 @@ const Page = () => {
     const School_Profile = [
         {
             key: "college",
-            label: `college : ${newUserData.college || ''}`,
+            label: `college : ${newUserData?.college || ''}`,
         },
         {
             key: "department",
-            label: `department : ${newUserData.department || ''}`,
+            label: `department : ${newUserData?.department || ''}`,
         },
         {
             key: "telephone",
-            label: `telephone : ${newUserData.phoneNumber || ''}`,
+            label: `telephone : ${newUserData?.phoneNumber || ''}`,
         },
         {
             key: "email",
@@ -187,15 +187,15 @@ const Page = () => {
         },
         {
             key: "presentPosition",
-            label: `presentPosition : ${newUserData.presentPosition || ''}`,
+            label: `presentPosition : ${newUserData?.presentPosition || ''}`,
         },
         {
             key: "dateOfFirstAppointment",
-            label: `date Of First Appointment: ${newUserData.dateOfFirstAppointment || ''}`,
+            label: `date Of First Appointment: ${newUserData?.dateOfFirstAppointment || ''}`,
         },
         {
             key: "dateOfConfirmationAppointment",
-            label: `date Of Confirmation Appointment : ${newUserData.dateOfConfirmationAppointment || ''}`,
+            label: `date Of Confirmation Appointment : ${newUserData?.dateOfConfirmationAppointment || ''}`,
         },
     ];
 

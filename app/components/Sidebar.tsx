@@ -90,6 +90,45 @@ const Sidebar = () => {
             to: "/staff",
             icon: <BsPerson size={20} />
         },
+        {
+            id: 3,
+            text: "Performance",
+            to: "#performance",
+            icon: <BsPersonFillSlash size={20} />
+        },
+        {
+            id: 4,
+            text: "Recruitments",
+            to: "#recruitments",
+            icon: <AiOutlineUsergroupAdd size={20} />
+        },
+        {
+            id: 5,
+            text: "Organization",
+            to: "#organization",
+            icon: <BsBarChartSteps size={20}
+            />
+        },
+        {
+            id: 7,
+            text: "Analvtics",
+            to: "#analvtics",
+            icon: <BsGraphUpArrow size={20}
+            />
+        },
+
+        {
+            id: 9,
+            text: "Reports",
+            to: "#reports",
+            icon: <BsBookHalf size={20} />
+        },
+        {
+            id: 10,
+            text: "Dark Mode",
+            to: "#",
+            icon: <BsSunFill size={20} />
+        },
 
         {
             id: 11,
@@ -138,26 +177,26 @@ const Sidebar = () => {
         {
             id: 3,
             text: "Performance",
-            to: "/performance",
+            to: "#performance",
             icon: <BsPersonFillSlash size={20} />
         },
         {
             id: 4,
             text: "Recruitments",
-            to: "/recruitments",
+            to: "#recruitments",
             icon: <AiOutlineUsergroupAdd size={20} />
         },
         {
             id: 5,
             text: "Organization",
-            to: "/organization",
+            to: "#organization",
             icon: <BsBarChartSteps size={20}
             />
         },
         {
             id: 7,
             text: "Analvtics",
-            to: "/analvtics",
+            to: "#analvtics",
             icon: <BsGraphUpArrow size={20}
             />
         },
@@ -165,7 +204,7 @@ const Sidebar = () => {
         {
             id: 9,
             text: "Reports",
-            to: "/reports",
+            to: "#reports",
             icon: <BsBookHalf size={20} />
         },
         {
@@ -204,7 +243,7 @@ const Sidebar = () => {
         },
     ]
 
-    const staffSideNavigation = [
+    const AdminStaffSideNavigation = [
         {
             id: 1,
             text: "Home",
@@ -366,7 +405,7 @@ const Sidebar = () => {
                             :
                             <>
 
-                                {staffSideNavigation.map(e => (
+                                {AdminStaffSideNavigation.map(e => (
                                     <Link key={e.id} className='hover:bg-[#282828] hover:text-[#5099ff] px-2 py-2 text-[14px] rounded-md hover:scale-105 transition-all delay-74 my-5 flex items-center gap-3' href={`${e.to}`}>{e.icon}{e.text}</Link>
                                 ))}
 

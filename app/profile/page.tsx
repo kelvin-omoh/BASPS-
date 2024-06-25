@@ -9,6 +9,7 @@ import { DB, auth, storage } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useStaffStore } from '../Store/Store';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 interface FormData {
     name: string;
@@ -29,7 +30,7 @@ interface FormData {
 
 const Page: React.FC = () => {
     const [user, loading, error] = useAuthState(auth); // Use useAuthState hook with your Firebase auth instance
-
+    const navigate = useRouter()
     const { profile, setProfile } = useStaffStore((state: any) => state);
 
     const [formData, setFormData] = useState<FormData>({
@@ -120,7 +121,7 @@ const Page: React.FC = () => {
             handleSubmit()
         }} className='flex flex-col gap-4 justify-center items-center mt-[10rem] min-h-[100vh] w-[80vw]'>
             <div className='flex justify-between w-[90%] items-center'>
-                <button className='flex gap-4 items-center'><FaChevronLeft /> Back</button>
+                <button onClick={() => navigate.push('/dashboard')} className='flex gap-4 items-center'><FaChevronLeft /> Back</button>
                 <button className='flex gap-4 items-center'>Edit profile</button>
                 <button
                     type='submit'

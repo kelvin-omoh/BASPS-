@@ -517,16 +517,17 @@ export default function App() {
                                 </DropdownItem>
 
                                 <DropdownItem>
-                                    <Button
-                                        className=" w-full"
-                                        onPress={() => {
-                                            onOpen()
+                                    {user &&
+                                        <Button
+                                            className=" w-full"
+                                            onPress={() => {
+                                                onOpen()
 
-                                            handleDeleteUser(user)
-                                        }}
-                                    >
-                                        Delete
-                                    </Button>
+                                                handleDeleteUser(user)
+                                            }}
+                                        >
+                                            Delete
+                                        </Button>}
 
                                 </DropdownItem>
                             </DropdownMenu>
