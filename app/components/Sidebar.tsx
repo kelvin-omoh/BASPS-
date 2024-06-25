@@ -135,7 +135,45 @@ const Sidebar = () => {
             to: "/staff",
             icon: <BsPerson size={20} />
         },
+        {
+            id: 3,
+            text: "Performance",
+            to: "/performance",
+            icon: <BsPersonFillSlash size={20} />
+        },
+        {
+            id: 4,
+            text: "Recruitments",
+            to: "/recruitments",
+            icon: <AiOutlineUsergroupAdd size={20} />
+        },
+        {
+            id: 5,
+            text: "Organization",
+            to: "/organization",
+            icon: <BsBarChartSteps size={20}
+            />
+        },
+        {
+            id: 7,
+            text: "Analvtics",
+            to: "/analvtics",
+            icon: <BsGraphUpArrow size={20}
+            />
+        },
 
+        {
+            id: 9,
+            text: "Reports",
+            to: "/reports",
+            icon: <BsBookHalf size={20} />
+        },
+        {
+            id: 10,
+            text: "Dark Mode",
+            to: "#",
+            icon: <BsSunFill size={20} />
+        },
         {
             id: 11,
             text: "",
