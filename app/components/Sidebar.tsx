@@ -93,7 +93,7 @@ const Sidebar = () => {
         {
             id: 21,
             text: "Fill Apprasial",
-            to: "/staff",
+            to: "/",
             icon: <BsPencil size={20} />
         },
 
