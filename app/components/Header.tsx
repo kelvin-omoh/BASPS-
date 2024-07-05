@@ -28,7 +28,7 @@ const Header = () => {
 
 
     return (
-        <div className=' z-[50] shadow-md  fixed flex justify-between items-center top-0 w-[100%] px-[3rem] h-[15%] text-white  bg-[#eeeeee]   border-b-[.2px]  border-gray-200'>
+        <div className={` z-[50] shadow-md  fixed flex justify-between items-center top-0 ${user ? 'w-[85%]' : 'w-[100%]'}  px-[3rem] h-[15%] text-white  bg-[#eeeeee]   border-b-[.2px]  border-gray-200`}>
 
 
 
