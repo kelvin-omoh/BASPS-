@@ -135,11 +135,12 @@ const Page = () => {
         }
     };
 
-
+    const navigate = useRouter()
 
     useEffect(() => {
         if (user?.email) {
             handleLoginForStaff();
+            navigate.push('/dashboard')
         }
     }, [user]);
 

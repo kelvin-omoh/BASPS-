@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo } from 'react'
 import Logo2 from '../assets/logo.png'
 import Image from 'next/image'
-import { BsBarChartSteps, BsBookHalf, BsGraphUpArrow, BsHouse, BsPaperclip, BsPerson, BsPersonFillSlash, BsSunFill, BsWindowSplit } from 'react-icons/bs'
+import { BsBarChartSteps, BsBookFill, BsBookHalf, BsBookmark, BsGraphUpArrow, BsHouse, BsPaperclip, BsPencil, BsPerson, BsPersonFillSlash, BsSunFill, BsWindowSplit } from 'react-icons/bs'
 import { AiFillBook, AiOutlineBook, AiOutlineHome, AiOutlineUsergroupAdd } from 'react-icons/ai'
 import { FaSignInAlt, FaSignOutAlt } from 'react-icons/fa'
 import Link from 'next/link'
@@ -70,13 +70,13 @@ const Sidebar = () => {
 
 
     const allStaffNavigations = [
-        {
-            id: 1,
-            text: "Home",
-            to: "/",
-            icon: <BsHouse
-                size={20} />
-        },
+        // {
+        //     id: 1,
+        //     text: "Home",
+        //     to: "/",
+        //     icon: <BsHouse
+        //         size={20} />
+        // },
         {
             id: 2,
             text: "Dashboard",
@@ -91,44 +91,12 @@ const Sidebar = () => {
             icon: <BsPerson size={20} />
         },
         {
-            id: 3,
-            text: "Performance",
-            to: "#performance",
-            icon: <BsPersonFillSlash size={20} />
-        },
-        {
-            id: 4,
-            text: "Recruitments",
-            to: "#recruitments",
-            icon: <AiOutlineUsergroupAdd size={20} />
-        },
-        {
-            id: 5,
-            text: "Organization",
-            to: "#organization",
-            icon: <BsBarChartSteps size={20}
-            />
-        },
-        {
-            id: 7,
-            text: "Analvtics",
-            to: "#analvtics",
-            icon: <BsGraphUpArrow size={20}
-            />
+            id: 21,
+            text: "Fill Apprasial",
+            to: "/staff",
+            icon: <BsPencil size={20} />
         },
 
-        {
-            id: 9,
-            text: "Reports",
-            to: "#reports",
-            icon: <BsBookHalf size={20} />
-        },
-        {
-            id: 10,
-            text: "Dark Mode",
-            to: "#",
-            icon: <BsSunFill size={20} />
-        },
 
         {
             id: 11,
@@ -160,20 +128,20 @@ const Sidebar = () => {
         },
     ]
     const noUserNavigation = [
-        {
-            id: 1,
-            text: "Home",
-            to: "/",
-            icon: <BsHouse
-                size={20} />
-        },
+        // {
+        //     id: 1,
+        //     text: "Home",
+        //     to: "/",
+        //     icon: <BsHouse
+        //         size={20} />
+        // },
 
-        {
-            id: 21,
-            text: "Staff",
-            to: "/staff",
-            icon: <BsPerson size={20} />
-        },
+        // {
+        //     id: 21,
+        //     text: "Staff",
+        //     to: "/staff",
+        //     icon: <BsPerson size={20} />
+        // },
 
         {
             id: 11,

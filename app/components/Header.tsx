@@ -25,11 +25,10 @@ const Header = () => {
     // }
 
     const navigate = useRouter()
-    console.log(systemData.data);
 
 
     return (
-        <div className=' z-[50] shadow-md  fixed flex justify-between items-center top-0 w-[85%] px-[3rem] h-[15%] text-white  bg-[#eeeeee]   border-b-[.2px]  border-gray-200'>
+        <div className=' z-[50] shadow-md  fixed flex justify-between items-center top-0 w-[100%] px-[3rem] h-[15%] text-white  bg-[#eeeeee]   border-b-[.2px]  border-gray-200'>
 
 
 
