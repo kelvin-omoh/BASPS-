@@ -231,19 +231,7 @@ const Sidebar = () => {
             to: "#performance",
             icon: <BsPersonFillSlash size={20} />
         },
-        {
-            id: 4,
-            text: "Recruitments",
-            to: "#recruitments",
-            icon: <AiOutlineUsergroupAdd size={20} />
-        },
-        {
-            id: 5,
-            text: "Organization",
-            to: "#organization",
-            icon: <BsBarChartSteps size={20}
-            />
-        },
+
         {
             id: 7,
             text: "Analvtics",
