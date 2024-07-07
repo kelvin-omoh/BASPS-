@@ -352,6 +352,8 @@ export default function App() {
                         });
                     }
                     setAllSavedUsers(users);
+                    console.log(users);
+
                     AllUsers.push(users)
                 });
             } catch (error) {
@@ -637,7 +639,7 @@ export default function App() {
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {allSavedUsers.length} staffs</span>
+                    <span className="text-default-400 text-small">Total {allSavedUsers?.length} staffs</span>
                     <label className="flex items-center text-default-400 text-small">
                         Rows per page:
                         <select
@@ -695,7 +697,7 @@ export default function App() {
 
     return (
         <>
-            {viewSingleUser && <div className=" bg-gray-700/75 w-[100%] left-0 z-[100] h-full absolute">
+            {viewSingleUser && <div className=" bg-gray-700/75 backdrop-blur-md w-[100%] left-0 z-[100] h-full absolute">
                 <div className=" w-full grid h-full place-content-center text-white text-[18px] ">
                     <button onClick={() => setViewSingleUser(!viewSingleUser)} className=" absolute top-8 right-8 bg-white rounded-full m-auto size-10 text-black text-[2.2em] ">x</button>
                     <div className=" flex flex-col gap-8">

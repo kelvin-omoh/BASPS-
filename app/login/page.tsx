@@ -138,7 +138,7 @@ const Page = () => {
             // Check if the email is in the specified path
             if (adminSnapshot.exists() && adminSnapshot.val().email === email) {
                 alert("Successfully signed in as admin");
-                router.push("/")
+                router.push("/staff")
             } else {
                 // If the user is signed in but not an admin, add them as an admin
                 await update(adminRef, { email, role: 'ADMIN' });

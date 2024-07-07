@@ -200,13 +200,13 @@ const Sidebar = () => {
             icon: <BsPersonFillSlash size={20} />
         },
 
-        {
-            id: 7,
-            text: "Analvtics",
-            to: "#analvtics",
-            icon: <BsGraphUpArrow size={20}
-            />
-        },
+        // {
+        //     id: 7,
+        //     text: "Analvtics",
+        //     to: "#analvtics",
+        //     icon: <BsGraphUpArrow size={20}
+        //     />
+        // },
 
         {
             id: 9,

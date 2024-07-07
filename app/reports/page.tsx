@@ -17,7 +17,7 @@ const Page = () => {
     const { user, error, isLoading } = useUser();
     const UserRole = useStaffStore((state: any) => state.user)
     // const [checkFormIfFilled, setCheckFormIfFilled] = useState(false)
-
+    const { isAdmin, setIsAdmin } = useStaffStore((state: any) => state);
     const router = useRouter()
     useEffect(() => {
         if (user) {
@@ -25,33 +25,36 @@ const Page = () => {
         }
     }, [user]);
 
-    const breadCrumbs = [
-        {
-            key: "Recomemdation sheet for Annual  Review Excersise (sheet 1)",
-            text: "Recomemdation sheet  Annual  Review Excersise (sheet 1)",
-        },
-        {
-            key: "Annual  Review Excersise Recommendation (sheet 2)",
-            text: "Annual  Review Excersise Recommendation (sheet 2)",
-        },
-        {
-            key: "ANNUAL PERFORMANCE EVALUATION REPORT ACADEMIC STAFF (sheet 3)",
-            text: "ANNUAL PERFORMANCE EVALUATION REPORT ACADEMIC STAFF (sheet 3)",
-        },
-        {
-            key: "WORK/COMPETENCY ASSESSMENT (sheet 4)",
-            text: "WORK/COMPETENCY ASSESSMENT (sheet 4)",
-        },
-        {
-            key: "BEHAVIORAL ATTRIBUTES ASSESSMENT (sheet 5)",
-            text: "BEHAVIORAL ATTRIBUTES ASSESSMENT (sheet 5)",
-        },
-        {
-            key: "Summary of Assessment: (sheet 6)",
-            text: "Summary of Assessment: (sheet 6)",
-        },
+    const breadCrumbs = !isAdmin
+        ? [
+            {
+                key: "Recomemdation sheet for Annual  Review Excersise (sheet 1)",
+                text: "Recomemdation sheet  Annual  Review Excersise (sheet 1)",
+            },
+            {
+                key: "Annual  Review Excersise Recommendation (sheet 2)",
+                text: "Annual  Review Excersise Recommendation (sheet 2)",
+            },
+            {
+                key: "ANNUAL PERFORMANCE EVALUATION REPORT ACADEMIC STAFF (sheet 3)",
+                text: "ANNUAL PERFORMANCE EVALUATION REPORT ACADEMIC STAFF (sheet 3)",
+            }
+        ]
+        : [
+            {
+                key: "WORK/COMPETENCY ASSESSMENT (sheet 4)",
+                text: "WORK/COMPETENCY ASSESSMENT (sheet 4)",
+            },
+            {
+                key: "BEHAVIORAL ATTRIBUTES ASSESSMENT (sheet 5)",
+                text: "BEHAVIORAL ATTRIBUTES ASSESSMENT (sheet 5)",
+            },
+            {
+                key: "Summary of Assessment: (sheet 6)",
+                text: "Summary of Assessment: (sheet 6)",
+            },
 
-    ];
+        ];
 
     const selectBreadCrumb = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedReport(e.target.value);
