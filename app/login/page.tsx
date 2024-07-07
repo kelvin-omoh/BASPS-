@@ -33,30 +33,6 @@ const Page = () => {
 
 
     const mainfeatures = [
-        {
-            id: 1,
-            icon: <BsBook size={20} />,
-            mainText: "Visit our Support Center",
-            subText: "Get guidance from our Support team."
-        },
-        {
-            id: 2,
-            icon: <BsClock size={20} />,
-            mainText: "View our Product Roadmap",
-            subText: "Browse and vote on what's next."
-        },
-        {
-            id: 3,
-            icon: <BsDownload size={20} />,
-            mainText: "Check out the latest releases",
-            subText: "See new features and updates."
-        },
-        {
-            id: 4,
-            icon: <BsPeople size={20} />,
-            mainText: "Join our Slack Community",
-            subText: "Discuss with hundreds of Corellium users."
-        },
     ];
 
     const StaffType = [
