@@ -1,18 +1,18 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Input, Select, SelectItem, Textarea } from '@nextui-org/react';
 import axios from 'axios';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import CountryList from '../../CountryList';
 import countryList from 'react-select-country-list';
 import toast from 'react-hot-toast';
 
-import { get, push, ref, set } from "firebase/database";
-import { DB } from '../../../firebaseConfig'
+import { get, getDatabase, onValue, push, ref, set } from "firebase/database";
+import { auth, DB } from '../../../firebaseConfig'
 import { CircularProgress } from "@nextui-org/progress";
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 const AcademicStaff: React.FC<any> = ({ buttonRef }) => {
-    const { user, error, isLoading } = useUser();
-
+    const [user, loading, error] = useAuthState(auth); // Use useAuthState hook with your Firebase auth instance
 
 
     // State to track whether form submission is attempted
@@ -71,48 +71,118 @@ const AcademicStaff: React.FC<any> = ({ buttonRef }) => {
         });
     };
 
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            if (user?.email) {
+                const db = getDatabase();
+                const profileRef = ref(db, `baps/profiles/${user.email.replace('.', '-')}`);
+                try {
+                    const snapshot = await get(profileRef);
+                    if (snapshot.exists()) {
+                        const profileData = snapshot.val();
+                        setFormData((prevFormData: any) => ({
+                            ...prevFormData,
+                            ...profileData // Merge new profileData into existing formData
+                        }));
+                    } else {
+                        console.log('No profile data found');
+                    }
+                } catch (error) {
+                    console.error('Error fetching profile data:', error);
+                }
+            }
+        };
+
+        fetchProfileData();
+    }, [user]);
+    useEffect(() => {
+        const fetchData = async () => {
+            if (user?.email) {
+                const db = getDatabase();
+                try {
+                    // Define the locations to check
+                    const locations = ['baps/academicstaff/'];
+
+                    // Loop through each location to check for existing email
+                    for (const location of locations) {
+                        const userRef = ref(DB, location);
+                        const snapshot = await get(userRef);
+                        const users = snapshot.val();
+
+                        // Check each user in the location for the email
+                        for (const key in users) {
+                            if (users[key].data.email === formData.email) {
+                                // If email exists, fetch and update the user's data
+                                const userKey = key; // Assuming you have a unique identifier for each user
+                                const userDataRef = ref(DB, `${location}/${userKey}/data`);
+                                const userDataSnapshot = await get(userDataRef);
+                                console.log(userDataSnapshot);
+                                if (userDataSnapshot.exists()) {
+                                    const profileData = userDataSnapshot.val();
+                                    console.log(profileData);
+                                    setFormData((prevFormData: any) => ({
+                                        ...prevFormData,
+                                        ...profileData
+                                    }));
+                                    // Show success message
+
+                                } else {
+                                    console.log('No profile data found');
+                                }
+                                return; // Exit the loop once the email is found and data is fetched
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching profile data:', error);
+                    toast.error('Error fetching profile data. Please try again.');
+                }
+            }
+        };
+
+        fetchData();
+    }, [user, formData.email]); // Added formData.email to dependencies
+
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const email = formData.email; // Get the email from the form data
+        console.log(email);
+
 
         try {
-            // Check if the email already exists in the database in each location
-            const locations = ['baps/nonacademic-junior-staff/', 'baps/academicstaff/', 'baps/nonacademic-senior-staff/'];
+            // Define the locations to check
+            const locations = ['baps/academicstaff/'];
 
+            // Loop through each location to check for existing email
             for (const location of locations) {
                 const userRef = ref(DB, location);
                 const snapshot = await get(userRef);
                 const users = snapshot.val();
-                console.log(users);
 
+                // Check each user in the location for the email
                 for (const key in users) {
                     if (users[key].data.email === email) {
-                        // If the email already exists, show a message and return
-                        toast.error('Email already exists in the database');
+                        // If email exists, update the user's data
+                        const userKey = key; // Assuming you have a unique identifier for each user
+                        const userDataRef = ref(DB, `${location}/${userKey}/data`);
+
+                        // Format dates before updating
+                        const formattedFormData = {
+                            ...formData
+                        };
+
+                        await set(userDataRef, formattedFormData);
+
+                        // Show success message
+                        toast.success('Academic data updated successfully!');
                         return;
                     }
                 }
             }
 
-            // If the email doesn't exist, proceed with form submission
-            let body = {
-                data: {
-                    ...formData,
-                    dateOfBirth: new Date(formData.dateOfBirth).toISOString().slice(0, 10), // Convert dateOfBirth to yyyy-MM-dd format
-                    dateOfFirstAppointment: new Date(formData.dateOfFirstAppointment).toISOString().slice(0, 10), // Convert dateOfFirstAppointment to yyyy-MM-dd format
-                    dateOfConfirmationAppointment: new Date(formData.dateOfConfirmationAppointment).toISOString().slice(0, 10), // Convert dateOfConfirmationAppointment to yyyy-MM-dd format
-                    dateOfPresentPosition: new Date(formData.dateOfPresentPosition).toISOString().slice(0, 10) // Convert dateOfPresentPosition to yyyy-MM-dd format
-                }
-            };
-
-            console.log(JSON.stringify(body));
-
-            // Push the new user data to the database
-            push(ref(DB, 'baps/academicstaff/'), body);
-
-            // Show success message
+            // If email does not exist in any location, show success message for form submission
             toast.success('Successfully filled!');
         } catch (error) {
             // Show error message
@@ -121,6 +191,8 @@ const AcademicStaff: React.FC<any> = ({ buttonRef }) => {
             console.error("Error submitting form:", error);
         }
     };
+
+
     // Function to check if all required fields are filled
     const isFormValid = () => {
         // Check if all required fields have non-empty values
@@ -197,179 +269,7 @@ const AcademicStaff: React.FC<any> = ({ buttonRef }) => {
         }}
             className='w-full pb-[4rem]'>
 
-            <h1 className='text-[18px] font-semibold'>Personal Data {process.env.STRAPI_TOKEN}</h1>
-            <div className='grid grid-cols-2 my-5 w-full justify-between gap-4'>
-                {/* LEFT */}
-                <div className='pb-7 w-full'>
-                    <div className='flex flex-col gap-6' >
-                        <label className='flex flex-col' htmlFor="">NAME:
-                            <input required type="text" className='border bg-slate-50 rounded-lg p-3'
-                                value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
-                            {renderErrorMessage('name')}
-                        </label>
-                        <label className='flex flex-col' htmlFor="">COLLEGE:
-                            <Select
-                                isRequired
 
-                                placeholder="Select your  college:"
-                                // defaultSelectedKeys={["Single"]}
-                                value={formData.college} onChange={(e) => setFormData({ ...formData, college: e.target.value })}
-                                className="max-w-xs"
-                            >
-
-                                <SelectItem key={'COLNAS'} value={'COLNAS'}>
-                                    {'COLNAS'}
-                                </SelectItem>
-                                <SelectItem key={'COLENG'} value={'COLENG'}>
-                                    {'COLENG'}
-                                </SelectItem>
-                                <SelectItem key={'COLFAST'} value={'COLFAST'}>
-                                    {'COLFAST'}
-                                </SelectItem>
-                                <SelectItem key={'COLMANS'} value={'COLMANS'}>
-                                    {'COLMANS'}
-                                </SelectItem>
-                                <SelectItem key={'COLENVS'} value={'COLEVS'}>
-                                    {'COLENVS'}
-                                </SelectItem>
-
-                            </Select>
-                            {/* <input required type="text" className='border bg-slate-50 rounded-lg p-3'
-                                value={formData.college} onChange={(e) => formData.setCollege(e.target.value)} /> */}
-                        </label>
-                        <label className='flex flex-col' htmlFor="">
-                            {formData.college.length > 2 && (
-                                <>
-
-                                    DEPARTMENT:
-                                    <Select
-                                        isRequired
-                                        placeholder="Select your department:"
-                                        value={selectedDepartment}
-                                        onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                                        className="max-w-xs"
-                                    >
-                                        {Object.values(allDepartments[`${formData.college}`]).map((collegeKey: any) => (
-                                            <SelectItem key={collegeKey} value={collegeKey}>
-                                                {collegeKey}
-                                            </SelectItem>
-                                        ))}
-                                    </Select>
-                                </>)}
-                            {/* <input required type="text" className='border bg-slate-50 rounded-lg p-3'
-                                value={formData.department} onChange={(e) => formData.setDepartment(e.target.value)} />
-                      */}  </label>
-                        <label className='flex flex-col' htmlFor="">TELEPHONE:
-                            <input required type="text" className='border bg-slate-50 rounded-lg p-3'
-                                value={formData.telephone} maxLength={11} onChange={(e) => setFormData({ ...formData, telephone: e.target.value })} />
-                        </label>
-                        <label className='flex flex-col' htmlFor="">EMAIL ADDRESS:
-                            <input required type="text" className='border bg-slate-50 rounded-lg p-3'
-                                value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-                        </label>
-                        <label className='flex flex-col' htmlFor="">DATE AND PLACE OF BIRTH:
-                            <Input required type='date' className='border bg-slate-50 rounded-lg p-3'
-                                value={formData.dateOfBirth} onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })} />
-                            <Input required type='text' placeholder='e.g Ikotun,Lagos,Nigeria ' className='border bg-slate-50 rounded-lg p-3'
-                                value={formData.placeOfBirth} onChange={(e) => setFormData({ ...formData, placeOfBirth: e.target.value })} />
-                        </label>
-                        <label className='flex flex-col' htmlFor="">DATE OF CONFIRMATION OF APPOINTMENT:
-                            <Input required type='date' className='border bg-slate-50 rounded-lg p-3'
-                                value={formData.dateOfAppointment} onChange={(e) => setFormData({ ...formData, dateOfConfirmationAppointment: e.target.value })} />
-                        </label>
-                        <label className='flex flex-col' htmlFor="">PRESENT POSITION:
-                            <Input required type='text' className='border bg-slate-50 rounded-lg p-3'
-                                value={formData.presentPosition} onChange={(e) => setFormData({ ...formData, presentPosition: e.target.value })} />
-                        </label>
-                        <label className='flex flex-col' htmlFor="">DATE OF PRESENT POSITION:
-                            <Input required type='date' className='border bg-slate-50 rounded-lg p-3'
-                                value={formData.dateOfPresentPosition} onChange={(e) => setFormData({ ...formData, dateOfPresentPosition: e.target.value })} />
-                        </label>
-                    </div>
-                </div>
-                {/* Right */}
-                <div className='pb-7 w-full'>
-                    <div className='flex flex-col gap-6' >
-                        <label className='flex flex-col' htmlFor="">NATIONALITY:
-                            <CountryList changeHandler={changeHandler} options={options} value={value} setValue={setValue} />
-                            {/* <input required type="text" className='border bg-slate-50 rounded-lg p-3'
-                                value={formData.nationality} onChange={(e) => formData.setNationality(e.target.value)} /> */}
-                        </label>
-                        <label className='flex flex-col' htmlFor="">MARITAL STATUS:
-                            <Select
-                                isRequired
-                                onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}
-                                placeholder="Select your  MARITAL STATUS:"
-                                // defaultSelectedKeys={["Single"]}
-                                className="max-w-xs"
-                            >
-
-                                <SelectItem key={'Single'} value={'Single'}>
-                                    {'Single'}
-                                </SelectItem>
-                                <SelectItem key={'Married'} value={'Married'}>
-                                    {'Married'}
-                                </SelectItem>
-                                <SelectItem key={'Divorced'} value={'Divorced'}>
-                                    {'Divorced'}
-                                </SelectItem>
-
-                            </Select>
-
-                        </label>
-                        <label className="flex flex-col" htmlFor="">NO OF CHILDREN AND THEIR AGES:
-                            <div className="flex flex-col gap-4">
-                                <Input required isRequired type="number" className="border bg-slate-50 rounded-lg p-3"
-                                    label="Number of Children"
-                                    value={formData.numberOfChildren !== undefined ? formData.numberOfChildren.toString() : ""}
-                                    onChange={(e) => setFormData({ ...formData, numberOfChildren: e.target.value })} />
-                                <Textarea
-                                    isRequired
-                                    label="Ages of children"
-                                    labelPlacement="outside"
-                                    placeholder="example: 6, 7, 8"
-                                    className="max-w-xs"
-                                    variant="faded"
-                                    value={formData.childrenAges} onChange={(e) => setFormData({ ...formData, childrenAges: e.target.value })} />
-                            </div>
-                        </label>
-                        <label className='flex flex-col' htmlFor="">NAME AND ADDRESS OF SPOUSE:
-                            <div className="flex flex-col gap-4">
-                                <input required type="text" className="border bg-slate-50 rounded-lg p-3"
-                                    placeholder="example: John Smith"
-                                    value={formData.spouseName} onChange={(e) => setFormData({ ...formData, spouseName: e.target.value })} />
-                                <Textarea
-                                    isRequired
-                                    label="Address"
-                                    labelPlacement="outside"
-                                    placeholder=""
-                                    className="max-w-xs"
-                                    variant="faded"
-                                    value={formData.spouseAddress} onChange={(e) => setFormData({ ...formData, spouseAddress: e.target.value })} />
-                            </div>
-                        </label>
-                        <label className='flex flex-col' htmlFor="">NAME AND ADDRESS OF NEXT OF KIN:
-                            <div className="flex flex-col gap-4">
-
-                                <Textarea
-                                    isRequired
-                                    // label="Address"
-                                    labelPlacement="outside"
-                                    placeholder=""
-                                    className="max-w-xs"
-                                    variant="faded"
-                                    value={formData.nextOfKinAddress} onChange={(e) => setFormData({ ...formData, nextOfKinNameAddress: e.target.value })} />
-                            </div>
-                        </label>
-                        <label className='flex flex-col' htmlFor="">DATE OF FIRST APPOINTMENT:
-                            <div className="flex flex-col gap-4">
-                                <Input required type='date' className='border bg-slate-50 rounded-lg p-3'
-                                    value={formData.dateOfFirstAppointment} onChange={(e) => setFormData({ ...formData, dateOfFirstAppointment: e.target.value })} />
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
             <div className='pb-7 w-full'>
                 <h1>EDUCATIONAL BACKGROUND</h1>
                 <div className='w-full flex-col gap-4' >

@@ -13,6 +13,8 @@ import { BsArrowRight, BsBook, BsClock, BsDownload, BsPeople } from "react-icons
 import bg from "./assets/bg.jpg"
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebaseConfig";
+import userImg from "./assets/sw1.png"
+import Image from "next/image";
 
 
 export default function Home() {
@@ -54,7 +56,7 @@ export default function Home() {
 
 
   return (
-    <div className={`body`}>
+    <div className={` mx-auto w-full `}>
       <div className="text-[2rem] h-[90vh]    gap-9 flex justify-between w-full items-center mx-auto my-auto ">
         {user ? (
           <>
@@ -63,60 +65,20 @@ export default function Home() {
               <StaffGeneralForm />
             </div>
 
-            <div
-              className=' w-full'
-              style={{
-                // use the src property of the image object
-                backgroundImage: `url(${bg.src})`,
-                // other styles
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
 
-                color: "white",
-                height: "100vh",
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <ul className=' w-full flex text-[10px] flex-col gap-4'>
-
-
-
-                {mainfeatures.map(feature => (
-                  <li key={feature.id} className=' my-3 bg-gray-500/10  rounded-md p-3  flex  justify-between items-center gap-4'>
-                    <div className=' flex gap-3 items-center justify-center'>
-                      <button className=' p-5 rounded-lg bg-gray-200/20 '>
-                        {feature.icon}
-                      </button>
-
-                      <div className=' flex-start flex flex-col'>
-                        <h1 className=' text-[13px] font-semibold'>{feature.mainText}</h1>
-                        <p className='  text-gray-300'>{feature.subText} </p>
-                      </div>
-                    </div>
-
-                    <button className=' mx-5   a  w-[10%] flex justify-end '><BsArrowRight size={30} className=' text-gray-300 ' />
-                    </button>
-                  </li>
-                ))}
-
-
-
-
-              </ul>
-            </div>
 
 
             {/* <p>Go to dashboard</p> */}
           </>
         ) : (
-          <div className="text-[2rem] h-[90vh] p-5  gap-9 flex justify-between w-full items-center mx-auto my-auto ">
+          <div className="text-[2rem]  h-[90vh] p-5  gap-9 flex justify-center w-full items-center mx-auto my-auto ">
 
             <>
-              <div className=" w-[50vw] flex flex-col gap-5">
-                <h1 className=' font-semibold text-center'>Welcome To BAPS</h1>
+              <div className=" w-[58vw] flex  mx-auto justify-center items-center flex-col gap-5">
+                <h1 className=' font-semibold w-full mx-auto text-center'>Bells University of Technology</h1>
+                <h4 className=" w-full mx-auto text-center">Staff Appraisal Management System(BUSAM)</h4>
+
+
                 <Button onClick={() => {
 
                   !user && alert("You need to login")
@@ -127,50 +89,7 @@ export default function Home() {
                 </Button>
               </div>
 
-              <div
-                className=' w-full'
-                style={{
-                  // use the src property of the image object
-                  backgroundImage: `url(${bg.src})`,
-                  // other styles
-                  backgroundPosition: "center",
-                  backgroundSize: "cover",
-                  backgroundRepeat: "no-repeat",
 
-                  color: "white",
-                  height: "100vh",
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <ul className=' w-full flex text-[10px] flex-col gap-4'>
-
-
-
-                  {mainfeatures.map(feature => (
-                    <li key={feature.id} className=' my-3 bg-gray-500/10  rounded-md p-3  flex  justify-between items-center gap-4'>
-                      <div className=' flex gap-3 items-center justify-center'>
-                        <button className=' p-5 rounded-lg bg-gray-200/20 '>
-                          {feature.icon}
-                        </button>
-
-                        <div className=' flex-start flex flex-col'>
-                          <h1 className=' text-[13px] font-semibold'>{feature.mainText}</h1>
-                          <p className='  text-gray-300'>{feature.subText} </p>
-                        </div>
-                      </div>
-
-                      <button className=' mx-5   a  w-[10%] flex justify-end '><BsArrowRight size={30} className=' text-gray-300 ' />
-                      </button>
-                    </li>
-                  ))}
-
-
-
-
-                </ul>
-              </div>
 
             </>
           </div>

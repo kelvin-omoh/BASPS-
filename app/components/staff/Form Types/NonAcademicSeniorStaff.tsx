@@ -1,16 +1,17 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Input, Select, SelectItem, Textarea } from '@nextui-org/react';
 import axios from 'axios';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import CountryList from '../../CountryList';
 import countryList from 'react-select-country-list';
-import { DB } from '@/app/firebaseConfig';
-import { get, push, ref } from 'firebase/database';
+import { auth, DB } from '@/app/firebaseConfig';
+import { get, getDatabase, push, ref, set } from 'firebase/database';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 
 const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
-    const { user, error, isLoading } = useUser();
+    const [user, loading, error] = useAuthState(auth); // Use useAuthState hook with your Firebase auth instance
 
     // State to track whether form submission is attempted
     const [formSubmitted, setFormSubmitted] = useState(false);
@@ -47,6 +48,117 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
 
 
 
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            if (user?.email) {
+                const db = getDatabase();
+                const profileRef = ref(db, `baps/profiles/${user.email.replace('.', '-')}`);
+                try {
+                    const snapshot = await get(profileRef);
+                    if (snapshot.exists()) {
+                        const profileData = snapshot.val();
+                        console.log(profileData);
+
+                        SetNonAcademicSeniorStaffData((prevFormData: any) => ({
+                            ...prevFormData,
+                            fullName: profileData.name || '',
+                            dateOfBirth: prevFormData.dateOfBirth, // Retain existing value if not provided
+                            placeOfBirth: prevFormData.placeOfBirth, // Retain existing value if not provided
+                            stateOfOrigin: prevFormData.stateOfOrigin, // Retain existing value if not provided
+                            nationality: prevFormData.nationality, // Retain existing value if not provided
+                            maritalStatus: prevFormData.maritalStatus, // Retain existing value if not provided
+                            spouseNameAddress: prevFormData.spouseNameAddress, // Retain existing value if not provided
+                            childrenAges: prevFormData.childrenAges, // Retain existing value if not provided
+                            nextOfKinNameAddress: prevFormData.nextOfKinNameAddress, // Retain existing value if not provided
+                            contactAddress: profileData.location || '',
+                            telephoneNumbers: profileData.phoneNumber || '',
+                            emailAddress: profileData.email || '',
+                            department: profileData.department || '',
+                            dateOfFirstAppointment: profileData.dateOfFirstAppointment || '',
+                            confirmationDate: profileData.dateOfConfirmationAppointment || '',
+                            presentPosition: profileData.presentPosition || '',
+                            presentGrade: prevFormData.presentGrade, // Retain existing value if not provided
+                            institutionAttended: prevFormData.institutionAttended, // Retain existing value if not provided
+                            academicQualifications: prevFormData.academicQualifications, // Retain existing value if not provided
+                            professionalQualifications: prevFormData.professionalQualifications, // Retain existing value if not provided
+                            professionalBodies: prevFormData.professionalBodies, // Retain existing value if not provided
+                            workExperience: prevFormData.workExperience, // Retain existing value if not provided
+                            publications: prevFormData.publications, // Retain existing value if not provided
+                            trainingProgrammes: prevFormData.trainingProgrammes, // Retain existing value if not provided
+                            conferencesAttended: prevFormData.conferencesAttended, // Retain existing value if not provided
+                            extraCurricularActivities: prevFormData.extraCurricularActivities, // Retain existing value if not provided
+                            staffId: profileData.staffId || '',
+                            staffType: profileData.staffType || ''
+                        }));
+                        console.log(NonAcademicSeniorStaffData.emailAddress)
+                    } else {
+                        console.log('No profile data found');
+                    }
+                } catch (error) {
+                    console.error('Error fetching profile data:', error);
+                }
+            }
+        };
+
+        fetchProfileData();
+    }, [user, NonAcademicSeniorStaffData.emailAddress]);
+
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (user?.email) {
+                const db = getDatabase();
+                try {
+                    // Define the locations to check
+                    const locations = ['baps/nonacademic-senior-staff/'];
+
+                    // Loop through each location to check for existing email
+                    for (const location of locations) {
+                        const userRef = ref(DB, location);
+                        const snapshot = await get(userRef);
+                        const users = snapshot.val();
+                        console.log(users);
+                        console.log(NonAcademicSeniorStaffData);
+                        // Check each user in the location for the email
+                        for (const key in users) {
+                            if (users[key].data.emailAddress === NonAcademicSeniorStaffData?.emailAddress) {
+                                // If email exists, fetch and update the user's data
+                                const userKey = key; // Assuming you have a unique identifier for each user
+                                const userDataRef = ref(DB, `${location}/${userKey}/data`);
+                                const userDataSnapshot = await get(userDataRef);
+                                console.log(userDataSnapshot);
+
+                                if (userDataSnapshot.exists()) {
+                                    const profileData = userDataSnapshot.val();
+                                    SetNonAcademicSeniorStaffData((prevFormData: any) => ({
+                                        ...prevFormData,
+                                        ...profileData
+                                    }));
+                                    console.log(profileData);
+
+                                    // Show success message
+
+                                } else {
+                                    console.log('No profile data found');
+                                }
+                                return; // Exit the loop once the email is found and data is fetched
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching profile data:', error);
+                    toast.error('Error fetching profile data. Please try again.');
+                }
+            }
+        };
+
+        fetchData();
+    }, [user, NonAcademicSeniorStaffData.emailAddress]); // Added formData.email to dependencies
+
+
+
+
 
     const handleNonAcademicSeniorStaffChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -67,7 +179,6 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
         SetNonAcademicSeniorStaffData({ ...NonAcademicSeniorStaffData, nationality: JSON.stringify(value.label) })
     }
 
-
     const handleSubmit = async (e: any) => {
         const email = NonAcademicSeniorStaffData.emailAddress; // Get the email from the form data
 
@@ -75,51 +186,38 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
             e.preventDefault();
 
             // Check if the email already exists in the database in each location
-            const locations = ['baps/nonacademic-junior-staff/', 'baps/academicstaff/', 'baps/nonacademic-senior-staff/'];
-            let emailExists = false;
-
+            const locations = ['baps/nonacademic-senior-staff/'];
+            // Loop through each location to check for existing email
             for (const location of locations) {
-                const userRef = ref(DB, location);
+                const userRef = ref(getDatabase(), location);
                 const snapshot = await get(userRef);
                 const users = snapshot.val();
                 console.log(users);
+                console.log(NonAcademicSeniorStaffData?.emailAddress);
 
-
+                // Check each user in the location for the email
                 for (const key in users) {
-                    if (users[key].data.emailAddress === email) {
-                        emailExists = true;
-                        break;
+                    if (users[key].data.email === NonAcademicSeniorStaffData?.emailAddress) {
+                        // If email exists, fetch and update the user's data
+                        const userKey = key; // Assuming you have a unique identifier for each user
+                        console.log(NonAcademicSeniorStaffData?.emailAddress);
+                        const userDataRef = ref(getDatabase(), `${location}/${userKey}/data`);
+
+                        // Format dates before updating
+                        const formattedFormData = {
+                            ...NonAcademicSeniorStaffData
+                        };
+
+                        const news = await set(userDataRef, formattedFormData);
+                        console.log(news);
                     }
                 }
-
-                if (emailExists) break;
             }
-
-            if (emailExists) {
-                // If the email already exists, show a message and return
-                toast.error('Email already exists in the database');
-            } else {
-                let body = {
-                    data: {
-                        ...NonAcademicSeniorStaffData,
-                        dateOfBirth: new Date(NonAcademicSeniorStaffData.dateOfBirth).toISOString().slice(0, 10), // Convert dateOfBirth to yyyy-MM-dd format
-                        dateOfFirstAppointment: new Date(NonAcademicSeniorStaffData.dateOfFirstAppointment).toISOString().slice(0, 10), // Convert dateOfFirstAppointment to yyyy-MM-dd format
-                        confirmationDate: new Date(NonAcademicSeniorStaffData.confirmationDate).toISOString().slice(0, 10), // Convert dateOfConfirmationAppointment to yyyy-MM-dd format
-                    }
-                };
-
-                console.log(JSON.stringify(body));
-
-                // If the email doesn't exist, proceed with form submission
-                const userRef = ref(DB, 'baps/nonacademic-senior-staff/');
-                const res: any = push(userRef, body);
-                console.log(res?.data);
-                toast.success('Successfully filled !!!!');
-            }
+            toast.success('Successfully filled !!!!')
         } catch (error: any) {
-            // Show error message
-            toast.error('Try again !!, email already taken', error?.response?.data?.error?.message);
-            console.error("Error submitting form:", error);
+            // toast.error('An error occurred, Try again!', error?.response?.data?.error?.message)
+            toast.error('An error occurred, Try again!');
+            console.log(error);
         }
     };
 
@@ -131,139 +229,7 @@ const NonAcademicSeniorStaff: React.FC<any> = ({ buttonRef }) => {
 
         }}
             className='w-full pb-[4rem]'>
-            <h1 className='text-[18px] font-semibold'>Personal Data</h1>
-            <div className='grid grid-cols-2 my-5 w-full justify-between gap-4'>
-                {/* LEFT */}
-                <div className='pb-7 w-full'>
-                    <div className='flex flex-col gap-6' >
-                        <label className='flex flex-col' htmlFor="">FULL NAME:
-                            <input name="fullName" required type="text" className='border bg-slate-50 rounded-lg p-3'
-                                value={NonAcademicSeniorStaffData.fullName} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
 
-                        </label>
-
-                        <label className='flex flex-col' htmlFor="">DEPARTMENT:
-                            <input name="department" required type="text" className='border bg-slate-50 rounded-lg p-3'
-                                value={NonAcademicSeniorStaffData.department} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                        </label>
-                        <label className='flex flex-col' htmlFor="">TELEPHONE:
-                            <input name='telephoneNumbers' maxLength={11} required className='border bg-slate-50 rounded-lg p-3'
-                                value={NonAcademicSeniorStaffData.telephoneNumbers} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                        </label>
-                        <label className='flex flex-col' htmlFor="">EMAIL ADDRESS:
-                            <input required type="email" name='emailAddress' className='border bg-slate-50 rounded-lg p-3'
-                                value={NonAcademicSeniorStaffData.emailAddress} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                        </label>
-                        <label className='flex flex-col' htmlFor="">DATE AND PLACE OF BIRTH:
-                            <Input name='dateOfBirth' required type='date' className='border bg-slate-50 rounded-lg p-3'
-                                value={NonAcademicSeniorStaffData.dateOfBirth} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                            <Input required name='placeOfBirth' type='text' placeholder='e.g Ikotun,Lagos,Nigeria ' className='border bg-slate-50 rounded-lg p-3'
-                                value={NonAcademicSeniorStaffData.placeOfBirth} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                        </label>
-
-                        <label className='flex flex-col' htmlFor="">PRESENT POSITION:
-                            <Input required type='text' name='presentPosition' className='border bg-slate-50 rounded-lg p-3'
-                                value={NonAcademicSeniorStaffData.presentPosition} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                        </label>
-                        <label className='flex flex-col' htmlFor="">confirmationDate:
-                            <div className="flex flex-col gap-4">
-                                <Input name='confirmationDate' required type='date' className='border bg-slate-50 rounded-lg p-3'
-                                    value={NonAcademicSeniorStaffData.confirmationDate} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                            </div>
-                        </label>
-                    </div>
-                </div>
-                {/* Right */}
-                <div className='pb-7 w-full'>
-                    <div className='flex flex-col gap-6' >
-                        <label className='flex flex-col' htmlFor="">NATIONALITY:
-                            <CountryList changeHandler={changeHandler} options={options} value={value} setValue={setValue} />
-
-                        </label>
-                        <label className='flex flex-col' htmlFor="">stateOfOrigin:
-                            <input required type="text" name='stateOfOrigin' className='border bg-slate-50 rounded-lg p-3'
-                                value={NonAcademicSeniorStaffData.stateOfOrigin} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                        </label>
-                        <label className='flex flex-col' htmlFor="">contactAddress:
-                            <input required type="text" name='contactAddress' className='border bg-slate-50 rounded-lg p-3'
-                                value={NonAcademicSeniorStaffData.contactAddress} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                        </label>
-                        <label className='flex flex-col' htmlFor="">MARITAL STATUS:
-                            <Select
-                                isRequired
-                                onChange={(e) => SetNonAcademicSeniorStaffData({ ...NonAcademicSeniorStaffData, maritalStatus: e.target.value })}
-                                placeholder="Select your  MARITAL STATUS:"
-                                // defaultSelectedKeys={["Single"]}
-                                className="max-w-xs"
-                            >
-
-                                <SelectItem key={'Single'} value={'Single'}>
-                                    {'Single'}
-                                </SelectItem>
-                                <SelectItem key={'Married'} value={'Married'}>
-                                    {'Married'}
-                                </SelectItem>
-                                <SelectItem key={'Divorced'} value={'Divorced'}>
-                                    {'Divorced'}
-                                </SelectItem>
-
-                            </Select>
-
-                        </label>
-
-                        <label className="flex flex-col" htmlFor="">NO OF CHILDREN AND THEIR AGES:
-                            <div className="flex flex-col gap-4">
-
-                                <Textarea
-                                    isRequired
-                                    label="Ages of children"
-                                    labelPlacement="outside"
-                                    name='childrenAges'
-                                    placeholder="example: 6, 7, 8"
-                                    className="max-w-xs"
-                                    variant="faded"
-                                    value={NonAcademicSeniorStaffData.childrenAges} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                            </div>
-                        </label>
-                        <label className='flex flex-col' htmlFor="">NAME AND ADDRESS OF SPOUSE:
-                            <div className="flex flex-col gap-4">
-
-                                <Textarea
-                                    isRequired
-                                    label="spouseNameAddress"
-                                    name='spouseNameAddress'
-                                    labelPlacement="outside"
-                                    placeholder=""
-                                    className="max-w-xs"
-                                    variant="faded"
-                                    value={NonAcademicSeniorStaffData.spouseNameAddress} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                            </div>
-                        </label>
-                        <label className='flex flex-col' htmlFor="">DATE OF FIRST APPOINTMENT:
-                            <div className="flex flex-col gap-4">
-                                <Input name='dateOfFirstAppointment' required type='date' className='border bg-slate-50 rounded-lg p-3'
-                                    value={NonAcademicSeniorStaffData.dateOfFirstAppointment} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                            </div>
-                        </label>
-                        <label className='flex flex-col' htmlFor="">NAME AND ADDRESS OF NEXT OF KIN:
-                            <div className="flex flex-col gap-4">
-
-                                <Textarea
-                                    isRequired
-                                    label="nextOfKinNameAddress"
-                                    labelPlacement="outside"
-                                    placeholder=""
-                                    className="max-w-xs"
-                                    variant="faded"
-                                    name='nextOfKinNameAddress'
-                                    value={NonAcademicSeniorStaffData.nextOfKinNameAddress} onChange={(e) => handleNonAcademicSeniorStaffChange(e)} />
-                            </div>
-                        </label>
-
-
-                    </div>
-                </div>
-            </div>
             <div className='pb-7 w-full'>
                 <h1>EDUCATIONAL BACKGROUND</h1>
                 <div className='w-full flex-col gap-4' >

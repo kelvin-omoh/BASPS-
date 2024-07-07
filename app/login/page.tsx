@@ -14,7 +14,7 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import axios from 'axios';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { ref, set, get, child, update } from 'firebase/database';
-
+import userImg from "../assets/user.jpg"
 interface Istaff {
     value: string;
 }
@@ -140,7 +140,7 @@ const Page = () => {
     useEffect(() => {
         if (user?.email) {
             handleLoginForStaff();
-            navigate.push('/dashboard')
+            navigate.push('/profile')
         }
     }, [user]);
 
@@ -171,88 +171,94 @@ const Page = () => {
 
         } catch (error) {
             console.error('Error logging in user', error);
+            alert("Error , wrong credentials, try again");
+        }
+    };
+
+    const staffLogin = async () => {
+        try {
+            // Check if the user is signed in
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // Reference to the staff path
+            const staffRef = ref(DB, `baps/profiles/${user.email?.replace('.', '-')}`);
+            const staffSnapshot = await get(staffRef);
+
+            // Check if the email is in the specified path
+            if (staffSnapshot.exists() && staffSnapshot.val().email === email) {
+                alert("Successfully signed in as staff");
+                router.push("/")
+            } else {
+                // If the user is signed in but not an admin, add them as an admin
+                await update(staffRef, { email, role: 'USER' });
+                alert("Successfully signed in and added as staff");
+            }
+
+        } catch (error) {
+            console.error('Error logging in user', error);
+            alert("Error , wrong credentials, try again");
         }
     };
 
 
-
     return (
-        <div className='w-full h-screen grid grid-cols-2'>
+        <div className='w-full h-screen grid '>
             <div className='p-[4rem] rounded-lg text-center flex flex-col justify-center items-center'>
                 <Image src={logo} alt={'logo'} className='w-[4rem]' />
-                <h1 className='font-semibold'>Welcome To BAPS </h1>
+                <h1 className='font-semibold'>Welcome To BUSAM {isAdmin ? 'Login as an Administrator' : "Login as a Staff"} </h1>
 
                 {/* FORM */}
                 <form onSubmit={(e) => e.preventDefault()} className='flex flex-col gap-3 mt-11 w-[70%]'>
-                    {isAdmin ?
-                        <>
-                            <label className=' flex flex-col text-start gap-3 ' htmlFor="">
-                                Email:
-                                <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" className=' w-full border border-[2px] p-3  rounded-md' name="" id="" />
-                            </label>
-                            <label className=' flex flex-col text-start gap-3 ' htmlFor="">
-                                Password:
-                                <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" className=' w-full border border-[2px] p-3  rounded-md' name="" id="" />
-                            </label>
-                        </>
-                        : null
 
+                    <>
+                        <label className=' flex flex-col text-start gap-3 ' htmlFor="">
+                            Email:
+                            <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" className=' w-full border border-[2px] p-3  rounded-md' name="" id="" />
+                        </label>
+                        <label className=' flex flex-col text-start gap-3 ' htmlFor="">
+                            Password:
+                            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" className=' w-full border border-[2px] p-3  rounded-md' name="" id="" />
+                        </label>
+                    </>
 
-                    }
 
                     <button onClick={() => {
                         isAdmin ?
-
                             adminLogin() :
-                            signInWithGoogle()
+                            staffLogin()
 
                     }} className='my-8 text-white bg-black rounded-lg p-3'>
-                        {isAdmin ? 'login ' : 'Continue to login In'}
+                        Login
                     </button>
-                    {!isAdmin ? <p> sign-in here as an Adminstrator?  <Link href={'/login'} onClick={() => {
-                        setIsAdmin(true)
-                        addUserRole('ADMIN')
-                    }} className='underline font-semibold text-blue-700'>Admin only</Link></p> :
-                        <p> sign-in here as an staff? <Link href={'/login'} onClick={() => {
+
+                    <div className=' w-full flex items-center justify-between'>
+
+                        <p> sign-up here as <Link href={'/sign-up'} onClick={() => {
                             setIsAdmin(false)
                             addUserRole('USER')
-                        }} className='underline font-semibold text-blue-700'>staff only</Link></p>}
+                        }} className='underline font-semibold text-blue-700'> a staff !</Link></p>
+                        <p>
+                            Sign in here as an{' '}
+                            <Link href={'/login'} onClick={() => {
+                                if (!isAdmin) {
+                                    setIsAdmin(true);
+                                    addUserRole('ADMIN');
+                                } else {
+                                    setIsAdmin(false);
+                                    addUserRole('USER');
+                                }
+                            }} className='underline font-semibold text-blue-700'>
+                                {!isAdmin ? 'Administrator only' : ' A staff'}
+                            </Link>
+                        </p>
+                    </div>
+
+
 
                 </form>
             </div>
-            <div
-                className='w-full'
-                style={{
-                    backgroundImage: `url(${bg.src})`,
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
-                    color: "white",
-                    height: "100vh",
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}
-            >
-                <ul className='w-full flex flex-col gap-4'>
-                    {mainfeatures.map(feature => (
-                        <li key={feature.id} className='my-3 bg-gray-500/10 rounded-md p-3 flex justify-between items-center gap-4'>
-                            <div className='flex gap-3 items-center justify-center'>
-                                <button className='p-5 rounded-lg bg-gray-200/20'>
-                                    {feature.icon}
-                                </button>
-                                <div className='flex-start flex flex-col'>
-                                    <h1 className='text-[18px] font-semibold'>{feature.mainText}</h1>
-                                    <p className='text-gray-300'>{feature.subText}</p>
-                                </div>
-                            </div>
-                            <button className='mx-5 w-[10%] flex justify-end'>
-                                <BsArrowRight size={30} className='text-gray-300' />
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+
         </div>
     );
 };

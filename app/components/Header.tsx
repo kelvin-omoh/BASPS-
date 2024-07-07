@@ -7,7 +7,8 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/navigation';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebaseConfig';
-
+import logo from "../assets/Bells-University-of-Technology2-removebg-preview (2).png"
+import Image from 'next/image';
 const Header = () => {
 
     const [user, loading, error] = useAuthState(auth); // Use useAuthState hook with your Firebase auth instance
@@ -32,25 +33,28 @@ const Header = () => {
 
 
 
-            <div className='text-[#707070]'>
+            <div className=' flex items-center text-[#707070]'>
 
+
+
+                <div className='  flex items-center'>
+                    <Image src={logo} alt='logo' className=' w-[200px] h-[140px] ' width={4000} height={4000} />
+                    <p className=' text-[20px]  font-bold '>Bells Appraisal Management System </p>
+                </div>
 
                 {
-                    isAdmin ?
-                        <h1 className=' text-[24px] text-black'>Hello, <span className=' capitalize'>
+                    isAdmin && user ?
+                        <h1 className=' text-[24px]   my-auto ml-[5rem] text-black'>Hello, <span className=' capitalize'>
                             ADMINSTRATOR </span></h1>
-                        : <h1 className={` text-[24px] text-black ${systemData?.data?.systemRole !== "USER" && 'hidden'}`}>Hello, <span className=' capitalize'>
+                        : <h1 className={` text-[16px] ml-[4rem] my-auto text-black ${systemData?.data?.systemRole !== "USER" && 'hidden'}`}>Hello, <span className=' capitalize'>
 
 
                             {user?.displayName ? user?.displayName : "Guest"} </span></h1>
 
                 }
-                <p>Welcome Back </p>
+
             </div>
-            <div className=' flex items-center  gap-4  border-[.1px] border-black bg-[#e4e4e4] w-[20rem] text-black h-[3rem] p-3 rounded-full '>
-                <BsSearch />
-                <input placeholder='search' type="text" className=' w-full bg-[#ffffff00]   outline-none' />
-            </div>
+
             <div className=' flex gap-3 items-center'>
                 <button className=' relative bg-gray-700 rounded-full p-3 text-black '>
                     <BsBell className=' text-white' size={20} />

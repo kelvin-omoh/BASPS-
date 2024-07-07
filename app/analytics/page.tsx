@@ -37,12 +37,12 @@ const Page = () => {
 
                         users.push({
                             id: key,
-                            name: staff.name,
+                            name: staff?.name,
                             role: "lecturer",
-                            college: staff.college ? staff.college : "null",
-                            department: staff.department ? staff.department : "null",
+                            college: staff?.college ? staff?.college : "null",
+                            department: staff?.department ? staff?.department : "null",
                             type: "academic-staff",
-                            email: staff.email
+                            email: staff?.email
                         });
                         staffCounts[0]++;
                     }

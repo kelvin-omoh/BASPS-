@@ -317,7 +317,7 @@ export default function App() {
                         const staff = data.academicstaff[key].data;
                         users.push({
                             id: key,
-                            name: staff.name,
+                            name: staff?.name,
                             role: "lecturer",
                             college: staff.college ? staff.college : "null",
                             department: staff.department ? staff.department : "null",
@@ -370,7 +370,7 @@ export default function App() {
 
     const handleDeleteUser = (user: any) => {
         // Display confirmation dialog
-        const isConfirmed = window.confirm(`Are you sure you want to delete ${user.name}?`);
+        const isConfirmed = window.confirm(`Are you sure you want to delete ${user?.name}?`);
 
         if (isConfirmed) {
             const db = getDatabase(app);
@@ -380,7 +380,7 @@ export default function App() {
 
                 const staffRef = ref(db, "/baps/academicstaff/" + user?.id)
                 remove(staffRef)
-                toast.success(user.name + ' has been successfully deleted ')
+                toast.success(user?.name + ' has been successfully deleted ')
 
             }
 
@@ -391,7 +391,7 @@ export default function App() {
 
                 const staffRef = ref(db, "/baps/nonacademic-junior-staff/" + user?.id)
                 remove(staffRef)
-                toast.success(user.name + ' has been successfully deleted ')
+                toast.success(user?.name + ' has been successfully deleted ')
 
             }
             if (user.type === 'non-academic-senior-staff') {
@@ -401,7 +401,7 @@ export default function App() {
 
                 const staffRef = ref(db, "/baps/nonacademic-senior-staff/" + user?.id)
                 remove(staffRef)
-                toast.success(user.name + ' has been successfully deleted ')
+                toast.success(user?.name + ' has been successfully deleted ')
 
             }
             console.log(user);
@@ -430,7 +430,7 @@ export default function App() {
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) =>
-                user.name.toLowerCase().includes(filterValue.toLowerCase()),
+                user?.name.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
         if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
@@ -604,7 +604,7 @@ export default function App() {
                             >
                                 {statusOptions.map((status) => (
                                     <DropdownItem key={status.uid} className="capitalize">
-                                        {status.name}
+                                        {status?.name}
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
@@ -625,7 +625,7 @@ export default function App() {
                             >
                                 {columns.map((column) => (
                                     <DropdownItem key={column.uid} className="capitalize">
-                                        {column.name}
+                                        {column?.name}
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
@@ -756,7 +756,7 @@ export default function App() {
                             align={column.uid === "actions" ? "center" : "start"}
                             allowsSorting={column.sortable}
                         >
-                            {column.name}
+                            {column?.name}
                         </TableColumn>
                     )}
 

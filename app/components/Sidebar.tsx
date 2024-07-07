@@ -174,13 +174,13 @@ const Sidebar = () => {
     ]
 
     const AdminStaffSideNavigation = [
-        {
-            id: 1,
-            text: "Home",
-            to: "/",
-            icon: <AiOutlineHome
-                size={20} />
-        },
+        // {
+        //     id: 1,
+        //     text: "Home",
+        //     to: "/dashboard",
+        //     icon: <AiOutlineHome
+        //         size={20} />
+        // },
         {
             id: 2,
             text: "Staff",
@@ -211,7 +211,7 @@ const Sidebar = () => {
         {
             id: 9,
             text: "Reports",
-            to: "#reports",
+            to: "/reports",
             icon: <BsBookHalf size={20} />
         },
         {

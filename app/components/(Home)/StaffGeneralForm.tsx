@@ -12,6 +12,9 @@ import StaffTypeTabs from "../staff/StaffTypeTabs";
 import { UserRole } from "@prisma/client";
 import { BsArrowDown, BsDownload } from "react-icons/bs";
 import Link from "next/link";
+import { getDatabase, onValue, ref } from "firebase/database";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/app/firebaseConfig";
 
 const StaffGeneralForm = () => {
     const [selected, setSelected] = React.useState("photos");
@@ -19,7 +22,8 @@ const StaffGeneralForm = () => {
     const addSystemData = useStaffStore((state: any) => state.addSystemData)
     const SystemData = useStaffStore((state: any) => state.systemData)
 
-    const { user, error, isLoading } = useUser();
+    const [user, loading, error] = useAuthState(auth); // Use useAuthState hook with your Firebase auth instance
+
     const router = useRouter()
     const UserInStore = useStaffStore((state: any) => state.user)
 
@@ -57,6 +61,7 @@ const StaffGeneralForm = () => {
 
         // Update user role in the store
         addUserRole(userRole);
+
 
         console.log(UserInStore);
 
@@ -110,7 +115,39 @@ const StaffGeneralForm = () => {
 
     const [staffRole, setStaffRole] = useState('')
 
+    const [formData, setFormData] = useState<any>({});
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+    useEffect(() => {
+        const db = getDatabase();
+        const starCountRef = ref(db, `baps/profiles/${user?.email?.replace('.', '-')}`);
 
+        onValue(starCountRef, (snapshot) => {
+            const data = snapshot.val();
+            console.log(data);
+            setFormData(data);
+            setIsDataLoaded(true);
+
+            // Set initial staffRole based on formData's staffType
+            switch (data?.staffType) {
+                case 'Academic':
+                    setStaffRole('ACADEMIC_STAFF');
+                    addUserRole('ACADEMIC_STAFF');
+                    break;
+                case 'Non Academic Senior Staff':
+                    setStaffRole('NON_ACADEMIC_SENIOR_STAFF');
+                    addUserRole('NON_ACADEMIC_SENIOR_STAFF');
+                    break;
+                case 'Non Academic Junior Staff':
+                    setStaffRole('NON_ACADEMIC_JUNIOR_STAFF');
+                    addUserRole('NON_ACADEMIC_JUNIOR_STAFF');
+                    break;
+                default:
+                    setStaffRole('ACADEMIC_STAFF'); // Default to ACADEMIC_STAFF if no matching type
+                    addUserRole('ACADEMIC_STAFF');
+                    break;
+            }
+        });
+    }, [user]);
 
     const handleClick = () => {
         if (buttonRef.current) {
@@ -135,6 +172,8 @@ const StaffGeneralForm = () => {
             text: "NON_ACADEMIC_JUNIOR_STAFF",
         },
     ];
+
+
 
 
 
@@ -302,15 +341,11 @@ const StaffGeneralForm = () => {
 
                 <Select
                     label="Staff"
-                    placeholder={`${SystemData?.data?.staffRole && checkForm === true ? SystemData.data.staffRole : 'Select your staff type'}`}
+                    placeholder={`${formData?.staffType && isDataLoaded ? formData?.staffType : 'Select your staff type'}`}
                     isRequired
-
-                    // defaultSelectedKeys={["1"]}
-                    isDisabled={SystemData?.data?.staffRole && checkForm === true ? true : false}
-                    className=""
+                    isDisabled={formData?.staffType && isDataLoaded}
                     onChange={handleStaffChange}
                     value={staffRole}
-
                 >
                     {StaffType.map((staff) => (
                         <SelectItem key={staff.label} value={staff.text}>
@@ -320,12 +355,29 @@ const StaffGeneralForm = () => {
                 </Select>
 
 
-
             </form>
 
 
             <Button isDisabled={staffRole.length === 0 ? true : false} className=" text-[16px] transition animate-bounce"
                 onClick={() => {
+                    switch (formData?.staffType) {
+                        case 'Academic':
+                            setStaffRole('ACADEMIC_STAFF');
+                            addUserRole('ACADEMIC_STAFF');
+                            break;
+                        case 'Non Academic Senior Staff':
+                            setStaffRole('NON_ACADEMIC_SENIOR_STAFF');
+                            addUserRole('NON_ACADEMIC_SENIOR_STAFF');
+                            break;
+                        case 'Non Academic Junior Staff':
+                            setStaffRole('NON_ACADEMIC_JUNIOR_STAFF');
+                            addUserRole('NON_ACADEMIC_JUNIOR_STAFF');
+                            break;
+                        default:
+                            setStaffRole('ACADEMIC_STAFF'); // Default to ACADEMIC_STAFF if no matching type
+                            addUserRole('ACADEMIC_STAFF');
+                            break;
+                    }
                     !checkForm ? onOpen() : alert("You have filled the form")
                 }
 
