@@ -96,6 +96,12 @@ const Sidebar = () => {
             to: "/",
             icon: <BsPencil size={20} />
         },
+        {
+            id: 9,
+            text: "Reports",
+            to: "/reports",
+            icon: <BsBookHalf size={20} />
+        },
 
 
         {
