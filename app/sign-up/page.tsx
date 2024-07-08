@@ -8,7 +8,6 @@ import Image from 'next/image';
 import Select from 'react-select';
 import { useStaffStore } from '../Store/Store';
 import { auth, DB } from '../firebaseConfig';
-
 interface FormData {
     name: string;
     email: string;
@@ -107,6 +106,59 @@ const SignupPage: React.FC = () => {
         setIsSubmitting(false);
     };
 
+
+
+    const allDepartments: any = {
+        'COLNAS': [
+            'Biological Sciences',
+            'Chemical and Food Sciences',
+            'Physical Sciences',
+            'Computer Science and Information Technology'
+        ],
+        'COLMANS': [
+            'Economics, Accounting and Finance',
+            'Business Administration',
+            'Management Technology',
+            'Computer Science and Information Technology'
+        ],
+        'COLENVS': [
+            'Architecture',
+        ],
+        'COLENG': [
+            'Bio-medical engineering',
+            'Civil engineering',
+            'Computer engineering',
+            'Electrical engineering',
+            'Mechanical engineering',
+            'Mechatronics engineering',
+        ],
+        'COLFAST': [
+            'Food Science and Technology',
+            'Agriculture and Agricultural Technology',
+        ],
+    };
+
+    const handleCollegeChange = (selectedOption: any) => {
+        setFormData({ ...formData, college: selectedOption.value, department: '' });
+    };
+
+    const handleDepartmentChange = (selectedOption: any) => {
+        setFormData({ ...formData, department: selectedOption.value });
+    };
+
+
+    const collegeOptions = Object.keys(allDepartments).map(collegeKey => ({
+        value: collegeKey,
+        label: collegeKey
+    }));
+
+    const departmentOptions: any = formData.college
+        ? allDepartments[formData.college].map((department: any) => ({
+            value: department,
+            label: department
+        }))
+        : [];
+
     return (
         <div className='w-full h-screen grid place-items-center'>
             <div className='p-[4rem] rounded-lg text-center flex flex-col justify-center items-center w-[80%]'>
@@ -150,8 +202,6 @@ const SignupPage: React.FC = () => {
                         { label: 'Position', name: 'position', type: 'text' },
                         { label: 'Phone number', name: 'phoneNumber', type: 'number' },
                         { label: 'Location', name: 'location', type: 'text' },
-                        { label: 'College', name: 'college', type: 'text' },
-                        { label: 'Department', name: 'department', type: 'text' },
                         { label: 'Present Position', name: 'presentPosition', type: 'text' },
                         { label: 'Date Of First Appointment', name: 'dateOfFirstAppointment', type: 'text' },
                         { label: 'Date Of Confirmation Appointment', name: 'dateOfConfirmationAppointment', type: 'text' },
@@ -168,6 +218,36 @@ const SignupPage: React.FC = () => {
                             />
                         </label>
                     ))}
+
+                    <div>
+                        <label className='flex  my-[1em] flex-col text-start gap-3' key={'college'}>
+                            College:
+                            <Select
+                                name='college'
+                                placeholder="Select your college:"
+                                value={collegeOptions.find(option => option.value === formData.college)}
+                                onChange={handleCollegeChange}
+                                options={collegeOptions}
+                                className='w-full border border-[2px] p-3 rounded-md bg-slate-100'
+                            />
+                        </label>
+
+                        {formData.college.length > 0 && (
+                            <label className='flex  flex-col text-start gap-3' key={'department'}>
+                                Department:
+                                <Select
+                                    name='department'
+                                    placeholder="Select your department:"
+                                    value={departmentOptions.find((option: any) => option.value === formData.department)}
+                                    onChange={handleDepartmentChange}
+                                    options={departmentOptions}
+                                    className='w-full border border-[2px] p-3 rounded-md bg-slate-100'
+                                />
+                            </label>
+                        )}
+                    </div>
+
+
                     <label className='flex flex-col text-start gap-3'>
                         Staff type
                         <Select

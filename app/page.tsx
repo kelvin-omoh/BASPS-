@@ -85,8 +85,27 @@ export default function Home() {
                   !user && navigate.push("/login")
                 }
                 } color="primary">
-                  Continue here to fill the form
+                  Next
                 </Button>
+              </div>
+              <div
+                className=' w-full'
+                style={{
+                  // use the src property of the image object
+                  backgroundImage: `url(${bg.src})`,
+                  // other styles
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                  backgroundRepeat: "no-repeat",
+
+                  color: "white",
+                  height: "100vh",
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Image width={1000} height={1000} className={'w-[70%] object-cover h-[70%]'} src={'https://www.shutterstock.com/image-photo/team-young-african-people-office-600nw-1922089445.jpg'} alt="" />
               </div>
 
 

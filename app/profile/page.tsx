@@ -164,8 +164,9 @@ const Page: React.FC = () => {
                 <label className='flex w-full flex-col mt-4 gap-4'>
                     Email
                     <input
-                        className='w-full p-3 rounded-md bg-slate-100'
+                        className='w-full cursor-not-allowed  p-3 rounded-md bg-slate-100'
                         type="email"
+                        disabled={true}
                         name="email"
                         required
                         value={formData?.email}
@@ -176,9 +177,10 @@ const Page: React.FC = () => {
                 <label className='flex w-full flex-col mt-4 gap-4'>
                     Staff Id
                     <input
-                        className='w-full p-3 rounded-md bg-slate-100'
+                        className='w-full cursor-not-allowed p-3 rounded-md bg-slate-100'
                         type="text"
                         name="staffId"
+                        disabled={true}
                         required
                         value={formData?.staffId}
                         onChange={handleChange}
@@ -187,14 +189,14 @@ const Page: React.FC = () => {
                 <label className='flex w-full flex-col mt-4 gap-4'>
                     Staff type
                     <Select
-                        label="Select staff type"
+                        label="Select staff cursor-not-allowed type"
                         className="max-w-xs"
                         name="staffType"
                         required
+                        disabled={true}
                         value={formData?.staffType}
                         defaultSelectedKeys={[`${formData?.staffType && formData?.staffType}`]}
                         selectedKeys={[`${formData?.staffType}`]}
-                        onChange={(e) => setFormData({ ...formData, staffType: e.target.value })}
                     >
 
                         <SelectItem key={'Academic'} value={'Academic'}>
@@ -219,12 +221,13 @@ const Page: React.FC = () => {
                         onChange={handleChange}
                     />
                 </label>
-                <label className='flex w-full flex-col mt-4 gap-4'>
+                <label className='flex cursor-not-allowed w-full flex-col mt-4 gap-4'>
                     Phone number
                     <input
-                        className='w-full p-3 rounded-md bg-slate-100'
+                        className='w-full p-3  cursor-not-allowed  rounded-md bg-slate-100'
                         type="number"
                         name="phoneNumber"
+                        disabled={true}
                         required
                         value={formData?.phoneNumber}
                         onChange={handleChange}
@@ -240,30 +243,32 @@ const Page: React.FC = () => {
                         onChange={handleChange}
                     />
                 </label>
-                <label className='flex w-full flex-col mt-4 gap-4'>
+                <label className='flex cursor-not-allowed w-full flex-col mt-4 gap-4'>
                     College
                     <input
                         type="text"
                         name="college"
                         required
+                        disabled={true}
                         value={formData?.college}
                         onChange={handleChange}
-                        className='w-full p-3 rounded-md bg-slate-100'
+                        className='w-full p-3  cursor-not-allowed  rounded-md bg-slate-100'
                     />
                 </label>
-                <label className='flex w-full flex-col mt-4 gap-4'>
+                <label className='flex cursor-not-allowed w-full flex-col mt-4 gap-4'>
                     Department
                     <input
-                        className='w-full p-3 rounded-md bg-slate-100'
+                        className='w-full p-3  cursor-not-allowed  rounded-md bg-slate-100'
                         type="text"
                         name="department"
+                        disabled={true}
                         required
                         value={formData?.department}
                         onChange={handleChange}
                     />
                 </label>
 
-                <label className='flex w-full flex-col mt-4 gap-4'>
+                <label className='flex  w-full flex-col mt-4 gap-4'>
                     Present Position
                     <input
                         className='w-full p-3 rounded-md bg-slate-100'
@@ -271,26 +276,29 @@ const Page: React.FC = () => {
                         name="presentPosition"
                         value={formData?.presentPosition}
                         onChange={handleChange}
+
                     />
                 </label>
-                <label className='flex w-full flex-col mt-4 gap-4'>
+                <label className='flex cursor-not-allowed w-full flex-col mt-4 gap-4'>
                     Date Of First Appointment
                     <input
-                        className='w-full p-3 rounded-md bg-slate-100'
+                        className='w-full p-3  cursor-not-allowed  rounded-md bg-slate-100'
                         type="text"
                         name="dateOfFirstAppointment"
                         value={formData?.dateOfFirstAppointment}
                         onChange={handleChange}
+                        disabled={true}
                     />
                 </label>
-                <label className='flex w-full flex-col mt-4 gap-4'>
+                <label className='flex cursor-not-allowed w-full flex-col mt-4 gap-4'>
                     Date Of Confirmation Appointment
                     <input
-                        className='w-full p-3 rounded-md bg-slate-100'
+                        className='w-full p-3  cursor-not-allowed  rounded-md bg-slate-100'
                         type="text"
                         name="dateOfConfirmationAppointment"
                         value={formData?.dateOfConfirmationAppointment}
                         onChange={handleChange}
+                        disabled={true}
                     />
                 </label>
             </div>

@@ -279,6 +279,8 @@ type User = typeof users[0];
 export default function App() {
     const [allSavedUsers, setAllSavedUsers] = useState<any>([])
     const [filterValue, setFilterValue] = useState("");
+    const { isAdmin, setIsAdmin } = useStaffStore((state: any) => state);
+
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
     const [statusFilter, setStatusFilter] = useState<Selection>("all");
@@ -519,7 +521,8 @@ export default function App() {
                                 </DropdownItem>
 
                                 <DropdownItem>
-                                    {user &&
+                                    {
+                                        isAdmin &&
                                         <Button
                                             className=" w-full"
                                             onPress={() => {

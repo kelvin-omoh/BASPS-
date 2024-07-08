@@ -116,7 +116,7 @@ const Page = () => {
     useEffect(() => {
         if (user?.email) {
             handleLoginForStaff();
-            navigate.push('/profile')
+
         }
     }, [user]);
 
@@ -138,7 +138,7 @@ const Page = () => {
             // Check if the email is in the specified path
             if (adminSnapshot.exists() && adminSnapshot.val().email === email) {
                 alert("Successfully signed in as admin");
-                router.push("/staff")
+                router.push("/analytics")
             } else {
                 // If the user is signed in but not an admin, add them as an admin
                 await update(adminRef, { email, role: 'ADMIN' });

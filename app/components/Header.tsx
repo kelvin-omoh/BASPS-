@@ -56,10 +56,7 @@ const Header = () => {
             </div>
 
             <div className=' flex gap-3 items-center'>
-                <button className=' relative bg-gray-700 rounded-full p-3 text-black '>
-                    <BsBell className=' text-white' size={20} />
-                    <span className=' top-2 right-2 bg-red-700 p-1 rounded-full absolute'></span>
-                </button>
+
                 <button className=' relative bg-gray-700 rounded-full p-3 text-black '>
                     <AiFillSetting className=' text-white' size={20} />
 
